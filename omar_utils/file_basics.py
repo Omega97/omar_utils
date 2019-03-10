@@ -1,15 +1,51 @@
-""" Basic operations with files
-26/2/2019
+"""
+Basic operations with files
+8/3/2019
 """
 from os import makedirs, listdir, remove
-from omar_utils.tensors import apply_to_tensor, tensor_to_string
+from omar_utils.tensors import *
 import shutil
+
+
+def tab_to_file(path, data):
+    """" save tensor in file """
+    path = add_file_extension(path)
+    file = open(path, 'w')
+    file.write(tensor_to_string(data))
+    file.close()
+
+
+def file_split(path):
+    """
+    takes a file and splits it in a list of lists keeping strings together
+    (removes blank lines)
+    :param path: path to file
+    :return: the split file
+    """
+    return [x.split() for x in read_file(path).split("\n") if x != '']
+
+
+def file_to_list(path):
+    """
+    takes a file and splits it in a list of lists dividing strings
+    (removes blank lines)
+    :param path: path to file
+    :return: the split file
+    """
+    return [x for x in read_file(path).split("\n") if x != '']
+
+
+def add_file_extension(path):
+    """ 'path' -> 'path.txt' """
+    if len(path.split('.')) == 1:
+        return path + '.txt'
+    else:
+        return path
 
 
 def read_file(path):
     """ output file content as list """
-    if len(path.split('.')) == 1:
-        path += '.txt'
+    path = add_file_extension(path)
     try:
         file = open(path)
     except FileNotFoundError:
@@ -40,34 +76,25 @@ def append_file(path, text):
     file.close()
 
 
-def file_to_tab(name, convert_to=None):     # todo tensor?
-    """ convert file to str matrix """
-    if len(name.split('.')) == 1:
-        name += '.txt'
-    try:
-        file = open(name)
-    except FileNotFoundError:
-        print('File', name, 'not found')
-        return
-    m = [[j for j in i.split()] for i in file]
-    if convert_to:
-        return apply_to_tensor(m, convert_to)
+def file_to_tab(path, splitter=None):
+    """ convert file to matrix """
+    if splitter:
+        v = [i.split(splitter) for i in file_to_list(path)]
     else:
-        return m
+        v = [i.split() for i in file_to_list(path)]
+
+    for i in range(len(v)):
+        if len(v[i]) == 1:
+            if type(v[i][0]) == str:
+                v[i] = [j for j in v[i][0]]
+    w = []
+    for i in v:
+        if len(i) > 0:
+            w += [i]
+    return to_int(w)
 
 
-def tab_to_file(name, data):
-    """" save tensor in file """
-    if len(name.split('.')) == 1:
-        name += '.txt'
-    file = open(name, 'w')
-    file.write(tensor_to_string(data))
-    file.close()
-
-
-def file_to_list(path):
-    """ output file content as str """
-    return read_file(path).split('\n')
+# todo file to tensor?
 
 
 def make_dir(path):
@@ -86,10 +113,9 @@ def del_dir(path):
         pass
 
 
-def del_file(path):     # todo
-    """"""
-    if len(path.split('.')) == 1:
-        path += '.txt'
+def del_file(path):     # todo check
+    """ delete file """
+    path = add_file_extension(path)
     remove(path)
 
 
@@ -103,3 +129,16 @@ def list_files_in_dir(path):
 
 if __name__ == "__main__":
     ...
+
+    from omar_utils.tensors import to_int
+
+    V = [[i + 4 * j for i in range(4)] for j in range(3)]
+    Path = 'test.txt'
+
+    tab_to_file(Path, V)
+
+    print(read_file(Path), '\n')
+    print(file_to_list(Path), '\n')
+    print(to_int(file_to_tab(Path)), '\n')
+
+    del_file(Path)
