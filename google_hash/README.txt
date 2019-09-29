@@ -1,5 +1,5 @@
-#PLAN
 
+PLAN
 
 1) implement objects
 2) implement score method
