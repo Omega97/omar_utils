@@ -1,7 +1,7 @@
 # omar_utils
 A library of useful methods of all kinds (basic file handling, tensors, GIFs, sets and much more)
 
-### Features:
+## Features:
 
 - file_basics: basic and simplified file handling
 - tensors: handful methods to deal with tensors
