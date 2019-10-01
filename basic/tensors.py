@@ -30,6 +30,11 @@ def tensor_to_int(v):
     return apply_to_tensor(v, int)
 
 
+def tensor_soft_to_float(v):
+    """ change type of each element in v to float """
+    return apply_to_tensor(v, soft_to_float)
+
+
 def to_str(v):
     """ change type of each element in v to str """
     return apply_to_tensor(v, str)
@@ -207,14 +212,15 @@ def split_tensor(v, separator=None):
 
 
 def soft_to_float(x):
-    """convert to float if possible, convert to int if x is integer"""
+    """convert to float if possible, convert to int if x is integer"""    
     try:
-        if float(x) == round(float(x)):
-            return int(x)
-        else:
-            return float(x)
+        x = float(x)
     except ValueError:
-        return x
+        return x    # not a number
+    if int(x) == x:
+        return int(x)   # integer
+    else:
+        return x    # float
 
 
 if __name__ == "__main__":
