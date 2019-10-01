@@ -8,5 +8,5 @@ A library of useful methods of all kinds (basic file handling, tensors, GIFs, se
 - sets: intuitive sets class
 - unit_test: neat unit testing
 - speed_test: test the speed of Python on your device
-- machine learning obtimizers
+- machine learning optimizers
 - much more!
