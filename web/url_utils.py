@@ -1,4 +1,4 @@
-""" URL_utils
+"""         URL_utils
 
 File uses a url and a path
 When initialized, tries to load the file
@@ -46,10 +46,11 @@ class File:
             self.separator = separator
         if self.data is None and self.path is not None:
             self.data = read_file(self.path)
-            if self.separator != '':
-                self.data = [i.split(self.separator) for i in self().split('\n')]
-            else:
-                self.data = [[i] for i in self().split('\n')]
+            if self.data is not None:
+                if self.separator != '':
+                    self.data = [i.split(self.separator) for i in self().split('\n')]
+                else:
+                    self.data = [[i] for i in self().split('\n')]
 
     def download_data(self, url=None, encoding="UTF-8", separator=''):
         """download data form the web using the URL, self.data -> matrix"""
@@ -122,6 +123,9 @@ class File:
         if self.index_ >= len(self):
             raise StopIteration
         return out
+
+    def __repr__(self, separator='\t'):
+        return '\n'.join([separator.join([j for j in i]) for i in self])
 
 
 if __name__ == '__main__':
