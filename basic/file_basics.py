@@ -1,14 +1,20 @@
 """ Basic operations with files"""
 from os import makedirs, listdir, remove
-from basic.tensors import tensor_to_string, apply_to_tensor, soft_to_float
+from omar_utils.basic.tensors import tensor_to_string, apply_to_tensor, soft_to_float
 import shutil
 
 
-def write_file(path, text):
-    """ rewrite file"""
-    with open(path, 'w') as file:
+def write_file(path, text, encoding='utf-8'):
+    """rewrite file"""
+    with open(path, "w", encoding=encoding) as file:
         file.write(text)
         file.close()
+
+
+def read_file(path, encoding='utf-8') -> str:
+    """output file content as list"""
+    with open(path, encoding=encoding) as file:
+        return file.read()
 
 
 def append_file(path, text, new_line='\n'):
@@ -36,8 +42,10 @@ def del_dir(path):
 
 def del_file(path):
     """ delete file """
-    path = add_file_extension(path)
-    remove(path)
+    try:
+        remove(path)
+    except FileNotFoundError:
+        pass
 
 
 def list_files_in_dir(path):
@@ -55,15 +63,14 @@ def file_to_list(path):
 
 
 def list_to_file(path, v):
-    """"""
+    """list -> file"""
     write_file(path, '\n'.join(apply_to_tensor(v, str)))
 
 
-def tab_to_file(path, data, tab='\t'):
+def tab_to_file(path, data, separator='\t'):
     """" save tensor in file """
-    path = add_file_extension(path)
     file = open(path, 'w')
-    file.write(tensor_to_string(data, tab=tab))
+    file.write(tensor_to_string(data, separator=separator))
     file.close()
 
 
@@ -77,38 +84,24 @@ def file_split(path):
     return [x.split() for x in read_file(path).split("\n") if x != '']
 
 
-def add_file_extension(path):
-    """ 'path' -> 'path.txt' """
-    if len(path.split('.')) == 1:
-        return path + '.txt'
-    else:
-        return path
-
-
-def read_file(path):
-    """output file content as list"""
-    path = add_file_extension(path)
-    try:
-        file = open(path)
-    except FileNotFoundError:
-        print('File', path, 'not found')
-        return
-    return ''.join([i for i in file])
-
-
 if __name__ == "__main__":
 
     Name = 'data.txt'
+
     write_file(Name, 'a b c\n1 2 3')
     append_file(Name, 'new')
     Data = file_to_list(Name)
-    print(Data, '\n')
-    Data = file_to_tab(Name)
-    print(Data, '\n')
+    assert Data == ['a b c', '1 2 3', 'new']
+    assert file_to_tab(Name) == [['a', 'b', 'c'], [1, 2, 3], ['new']]
     del_file(Name)
 
-    Name = 'data.txt'
-    tab_ = [[1, '2'], ['c', 'D']]
-    tab_to_file(Name, tab_)
-    print(file_to_tab(Name))
+    Tab = [[1, '2'], ['c', 'D']]
+    tab_to_file(Name, Tab)
+    assert file_to_tab(Name) == [[1, 2], ['c', 'D']]
+    del_file(Name)
+
+    Text = '古'
+    write_file(Name, Text)
+    assert read_file(Name) == '古'
+    assert type(read_file(Name)) == str
     del_file(Name)
