@@ -1,8 +1,7 @@
 """ plot heat-map and heat-map gif """
 import matplotlib.pyplot as plt
 import numpy as np
-from imageio import mimsave
-from basic.tensors import is_matrix, tensor_max, tensor_min
+from omar_utils.basic.tensors import is_matrix, tensor_max, tensor_min
 
 
 plt.rcParams.update({'figure.max_open_warning': -1})    # removes memory limits
@@ -71,14 +70,6 @@ v    """
         plt.show()
 
     return image
-
-
-def tensor_to_heatmap_gif(t, path='./my_gif.gif', fps=5,
-                          x_range=None, y_range=None, z_range=None, cmap=None, title=''):
-    """ convert tensor to gif """
-    mimsave(path,
-            [matrix_to_heatmap2(i, x_range=x_range, y_range=y_range, z_range=z_range,
-                                cmap=cmap, title=title, show=False) for i in t], fps=fps)
 
 
 def plots_to_slide(list_, x=None, y=None):  # todo finish
