@@ -95,6 +95,13 @@ def product_function(v):
     return f
 
 
+def softmax(v):
+    """softmax"""
+    out = [exp(i) for i in v]
+    s = sum(out)
+    return [i/s for i in out]
+
+
 if __name__ == "__main__":
 
     assert norm([3, 4]) == 5
