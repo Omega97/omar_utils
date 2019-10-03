@@ -3,7 +3,6 @@
 File uses a url and a path
 When initialized, tries to load the file
 If unsuccessful, tries to download data from the web
-
 """
 from urllib import request
 from omar_utils.basic.tensors import *
@@ -12,11 +11,12 @@ import os
 
 
 class File:
-    def __init__(self, url=None, path=None, separator=''):
+    def __init__(self, url=None, path=None, separator='', do_report=False):
         self.path = path
         self.url = url
         self.data = None
         self.separator = separator
+        self.do_report = do_report
         self.index_ = 0
         self.load()
 
@@ -25,7 +25,8 @@ class File:
         if path:
             self.path = path
         if self.path:
-            print('>>>  Saving data in file "%s"\n' % self.path)
+            if self.do_report:
+                print('>>>  Saving data in file "%s"\n' % self.path)
             # create dirs
             dirs = self.path.split('/')[:-1]
             for i in range(len(dirs)):
@@ -33,10 +34,11 @@ class File:
                 if not os.path.isdir(p):
                     os.mkdir(p)
             # create file
-            s = '\n'.join([separator.join([j for j in i]) for i in self.data])
+            s = '\n'.join([separator.join([str(j) for j in i]) for i in self.data])
             write_file(self.path, s)
         else:
             raise TypeError('Please specify the path!')
+        return self
 
     def load_from_file(self, path=None, separator=''):
         """load data form file using the path, self.data -> matrix"""
@@ -46,26 +48,27 @@ class File:
             self.separator = separator
         if self.data is None and self.path is not None:
             self.data = read_file(self.path)
-            if self.data is not None:
-                if self.separator != '':
-                    self.data = [i.split(self.separator) for i in self().split('\n')]
-                else:
-                    self.data = [[i] for i in self().split('\n')]
+            if self.separator != '':
+                self.data = [i.split(self.separator) for i in self().split('\n')]
+            else:
+                self.data = [[i] for i in self().split('\n')]
 
     def download_data(self, url=None, encoding="UTF-8", separator=''):
         """download data form the web using the URL, self.data -> matrix"""
         if url:
             self.url = url
         self.data = request.urlopen(self.url).read().decode(encoding)
-        self.to_tab(separator)
+        self.to_mat(separator)
 
     def load(self, separator=''):
-        print('\n>>>  Loading file...')
+        if self.do_report:
+            print('\n>>>  Loading file...')
         try:
             if self.path is not None:
-                print('>>>  Trying to load data from "%s"' % self.path)
+                if self.do_report:
+                    print('>>>  Trying to load data from "%s"' % self.path)
                 self.load_from_file(separator=separator)
-            if self():
+            if self() and self.do_report:
                 if self.url:
                     print('>>>  An URL has been provided, but data has been loaded from "%s" anyway' % self.path)
                 print('>>>  Loaded data from file "%s"\n' % self.path)
@@ -74,17 +77,19 @@ class File:
 
         if self() is None:
             if self.url:
-                print('>>>  Trying download...')
+                if self.do_report:
+                    print('>>>  Trying download...')
                 self.download_data()
             if self():
-                print('>>>  Downloaded data from "%s"\n' % self.url)
+                if self.do_report:
+                    print('>>>  Downloaded data from "%s"\n' % self.url)
                 if separator != '':
                     self.split(separator)
 
         if self() is None:
             raise FileNotFoundError
 
-    def to_tab(self, separator=''):
+    def to_mat(self, separator=''):
         if type(self()) == str:
             if separator != '':
                 self.data = string_to_matrix(self.data, separator=separator)
@@ -107,7 +112,7 @@ class File:
 
     def __len__(self):
         if self() is None:
-            return 0
+            return None
         return len(self())
 
     def __getitem__(self, item):
@@ -124,19 +129,27 @@ class File:
             raise StopIteration
         return out
 
-    def __repr__(self, separator='\t'):
-        return '\n'.join([separator.join([j for j in i]) for i in self])
+    def __repr__(self):
+        return '\n'.join(['\t'.join([str(j) for j in i]) for i in self])
 
 
 if __name__ == '__main__':
 
+    from omar_utils.basic.file_basics import del_file
+
     URL = 'https://raw.githubusercontent.com/Omega97/google_hash/master/example/problems/a_example.txt'
-    PATH = 'data/data1.txt'
+    PATH = 'data1.txt'
 
-    file_ = File(url=URL, path=PATH)
-    file_.split()
-    # file_.save(separator=' ')
+    del_file(PATH)
 
-    if file_:
-        for I in file_:
-            print('\t'.join(I))
+    f = File(url=URL, path=PATH, do_report=True)
+    f.split()
+    f.to_float()
+    f.save()
+
+    assert f[1][1] == 3
+
+    f = File(url=URL, path=PATH, do_report=True)
+    f.split('\t')
+    assert type(f[1][1]) == str
+    del_file(PATH)
