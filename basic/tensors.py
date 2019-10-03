@@ -97,19 +97,21 @@ def join_tensor(v, c=' '):
     return c.join([join_tensor(i, c=c) if type(i) == list else str(i) for i in v])
 
 
-def tensor_to_string(v, tab='\t', inline='\n', depth=0):
+def tensor_to_string(v, separator='\t', inline='\n'):
     """ convert a tensor into a neat string """
-    s = tab.join([inline + tensor_to_string(i, tab=tab, inline=inline, depth=depth+1) if type(i) == list else str(i)
-                  for i in v])
-    if not depth:
-        while s[0] == inline:
-            s = s[1:]
-    return s
+    if type(v) == list:
+        if is_vector(v):
+            s = separator
+        else:
+            s = inline * (tensor_depth(v)-1)
+        return s.join([tensor_to_string(i, separator, inline) for i in v])
+    else:
+        return str(v)
 
 
-def display_tensor(v, tab='\t'):
+def display_tensor(v, separator='\t'):
     """ useful to print a tensor """
-    print(tensor_to_string(v, tab=tab))
+    print(tensor_to_string(v, separator=separator))
 
 
 def tensor_count(v, equal_to=None):
@@ -223,6 +225,11 @@ def soft_to_float(x):
         return x    # float
 
 
+def string_to_matrix(s, separator=None):
+    """str -> matrix"""
+    return [[j for j in i.split(separator)] for i in s.split('\n')]
+
+
 if __name__ == "__main__":
 
     # exhaustive tests
@@ -259,7 +266,8 @@ if __name__ == "__main__":
     assert conditioned_remove([1], lambda x: x > 0) == []
     assert apply_to_tensor([1, [2, 3]], lambda x: x*2) == [2, [4, 6]]
     assert tensor_to_string([1, 1]) == '1\t1'
-    assert tensor_to_string([[1, 1], [1, 1]]) == '1\t1\t\n1\t1'
-    assert tensor_to_string([[[1, 1], [1, 1]], [[1, 1], [1, 1]]]) == '1\t1\t\n1\t1\t\n\n1\t1\t\n1\t1'
+    assert tensor_to_string([[1, 1], [1, 1]]) == '1\t1\n1\t1'
+    assert tensor_to_string([[[1, 1], [1, 1]], [[1, 1], [1, 1]]]) == '1\t1\n1\t1\n\n1\t1\n1\t1'
     assert round_tensor([1.11, [2.22, 3.333]], 1) == [1.1, [2.2, 3.3]]
     assert split_tensor(['1 2 3', ['1 2', '3 4']]) == [['1', '2', '3'], [['1', '2'], ['3', '4']]]
+    assert string_to_matrix('1 2\n3 4', separator=' ') == [['1', '2'], ['3', '4']]
