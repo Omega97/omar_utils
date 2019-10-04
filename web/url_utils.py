@@ -4,7 +4,7 @@ File uses a url and a path
 When initialized, tries to load the file
 If unsuccessful, tries to download data from the web
 """
-from urllib import request
+from urllib import request, error
 from omar_utils.basic.tensors import *
 from omar_utils.basic.file_basics import write_file, read_file
 import os
@@ -24,20 +24,23 @@ class File:
         """save data in a file"""
         if path:
             self.path = path
-        if self.path:
-            if self.do_report:
-                print('>>>  Saving data in file "%s"\n' % self.path)
-            # create dirs
-            dirs = self.path.split('/')[:-1]
-            for i in range(len(dirs)):
-                p = '/'.join(dirs[:(i+1)])
-                if not os.path.isdir(p):
-                    os.mkdir(p)
-            # create file
-            s = '\n'.join([separator.join([str(j) for j in i]) for i in self.data])
-            write_file(self.path, s)
-        else:
-            raise TypeError('Please specify the path!')
+        if not self.path:
+            raise TypeError('Please specify the path before saving!')
+        if not self():
+            raise TypeError('Please load some data before saving!')
+
+        if self.do_report:
+            print('>>>  Saving data in file "%s"\n' % self.path)
+        # create dirs
+        dirs = self.path.split('/')[:-1]
+        for i in range(len(dirs)):
+            p = '/'.join(dirs[:(i+1)])
+            if not os.path.isdir(p):
+                os.mkdir(p)
+        # create file
+        s = '\n'.join([separator.join([str(j) for j in i]) for i in self.data])
+        write_file(self.path, s)
+
         return self
 
     def load_from_file(self, path=None, separator=''):
@@ -57,13 +60,18 @@ class File:
         """download data form the web using the URL, self.data -> matrix"""
         if url:
             self.url = url
-        self.data = request.urlopen(self.url).read().decode(encoding)
-        self.to_mat(separator)
+        try:
+            self.data = request.urlopen(self.url).read().decode(encoding)
+        except error.URLError:
+            pass
+        else:
+            self.to_mat(separator)
 
     def load(self, separator=''):
         if self.do_report:
             print('\n>>>  Loading file...')
         try:
+            # try download
             if self.path is not None:
                 if self.do_report:
                     print('>>>  Trying to load data from "%s"' % self.path)
@@ -86,7 +94,8 @@ class File:
                 if separator != '':
                     self.split(separator)
 
-        if self() is None:
+        # if no data has been loaded and a path/url has been provided
+        if self() is None and (self.path or self.url):
             raise FileNotFoundError
 
     def to_mat(self, separator=''):
