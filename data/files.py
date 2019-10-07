@@ -6,46 +6,80 @@ File(url, path)
 When initialized, tries to load the file as string to .data
 If unsuccessful, tries to download data from the web (as string to .data)
 """
+# todo download needs index + columns
 from urllib import request, error
-from omar_utils.basic.file_basics import write_file, read_file
 import os
 import pandas as pd
-from omar_utils.basic.tensors import soft_to_float
+from omar_utils.basic.tensors import soft_to_float, string_to_matrix
+from sys import getsizeof
 
 
 class File:
-    def __init__(self, url=None, path=None, separator=None, do_report=False, encoding="UTF-8"):
-        self.path = path
+    def __init__(self, path=None, url=None, separator=None, encoding="UTF-8", do_report=False):
+        """
+        A File is used to load and store data as pd.DataFrames / .pkl files
+        - download data from web as string (data is stored in .data as pd.DataFrame)
+        - save data locally in a .pkl file
+        - load data from .pkl file to .data as pd.DataFrame
+
+        :param path: used both to load and save .pkl file
+        :param url: url
+        :param separator: used when downloading from web to split file into columns
+        :param encoding: encoding
+        :param do_report: do fancy console report
+        """
+        self.path = None
         self.url = url
         self.data = None
-        self.tab = None
         self.separator = separator
-        self.do_report = do_report
         self.encoding = encoding
+        self.do_report = do_report
+        self.set_path(path)
         self.loading_sequence()
+
+    def set_path(self, path):
+        """make path a .pkl"""
+        if path is not None:
+            v = path.split('.')
+            if len(v) > 1:
+                v = v[:-1]
+            self.path = '.'.join(v) + '.pkl'
 
     def report(self, message, s='>>>  ', pre_new_line=0):
         """fancy print, but only if self.do_report"""
         if self.do_report:
             print('\n' * pre_new_line + s + message)
 
+    def report_size(self):
+        size = getsizeof(self())
+        if size < 1000:
+            message = '%d B' % size
+        else:
+            message = '%.3f kB' % (size / 10 ** 3)
+        self.report('Data size = ' + message + '\n')
+
     def is_loaded(self):
         """:return True if data has been loaded"""
-        return self.data is not None
+        return self() is not None
+
+    def have_path(self):
+        return self.path is not None
+
+    def have_url(self):
+        return self.url is not None
 
     def save(self, path=None):
         """save data in a file as string"""
 
         # preparation
-        if path:
-            self.path = path
+        self.set_path(path)
         if not self.path:
             raise TypeError('Please specify the path before saving!')
-        if not self.data:
+        if not self.is_loaded():
             raise TypeError('Please load some data before saving!')
 
         # create dirs
-        self.report('Saving data in file "%s"\n' % self.path)
+        self.report('Saving data in file "%s"' % self.path, pre_new_line=1)
         dirs = self.path.split('/')[:-1]
         for i in range(len(dirs)):
             p = '/'.join(dirs[:(i+1)])
@@ -53,36 +87,44 @@ class File:
                 os.mkdir(p)
 
         # create file
-        write_file(self.path, self.data)
+        self().to_pickle(self.path)
+        self.report_size()
 
         return self
 
-    def gen_tab(self):
-        """use .data to generate .tab DataFrame"""
-        if self.separator != '':
-            v = [i.split(self.separator) for i in self.data.split('\n')]
-            v = [i for i in v if len(i)]
-            self.tab = pd.DataFrame(v)
+    def load_file(self, path=None):
+        """load data form file using the path, self.data -> DataFrame"""
+        self.set_path(path)
+        self.report('Trying to load data from "%s"' % self.path)
+        self.data = None
+        try:
+            # try loading file
+            self.data = pd.read_pickle(self.path)
+        except AttributeError:
+            self.report('File not found!')
+        except Exception as e:
+            self.report('[' + str(e) + '] error when loading "%s"' % self.path)
         else:
-            self.tab = pd.DataFrame([[i] for i in self.data.split('\n')])
-
-    def load_from_file(self, path=None):
-        """load data form file using the path, self.data -> matrix"""
-        if path:
-            self.path = path
-
-        # load .data and .tab
-        if self.path is not None:   # if a path has been specified
-            self.data = read_file(self.path)
-            self.gen_tab()
+            # file loaded
+            self.report('Loaded data from file "%s"' % self.path)
+            self.report_size()
+            if self.have_url():
+                self.report('An URL has been provided, but data has been loaded from locally anyway')
 
     def download_data(self, url=None):
         """download data form the web using the URL, self.data -> matrix"""
         if url:
             self.url = url
-        self.data = request.urlopen(self.url).read().decode(self.encoding)
-        if self.is_loaded():
-            self.gen_tab()
+        self.report('Trying to download data from "%s"' % self.url)
+        try:
+            # try downloading file
+            data = request.urlopen(self.url).read().decode(self.encoding)
+        except error.URLError:
+            self.report('Cannot download data from "%s"' % self.url)
+        else:
+            # file downloaded
+            self.load_var(data)
+            self.report_size()
 
     def loading_sequence(self):
         """
@@ -99,54 +141,53 @@ class File:
         """
         self.report('Loading file...', pre_new_line=1)
 
-        # 1) try to load data from .path
-        if self.path is not None:
-            self.report('Trying to load data from "%s"' % self.path)
-            try:
-                self.load_from_file()   # loading...
-                self.report('Loaded data from file "%s"' % self.path)
-                if self.is_loaded() and self.url:
-                    self.report('An URL has been provided, but data has been loaded from locally anyway')
-            except FileNotFoundError:
-                self.report('Cannot load data from "%s"' % self.path)
+        # 1) LOAD data from .path
+        if self.have_path():
+            self.load_file()    # loading...
 
-        # 2) try to download data from .url
+        # 2) DOWNLOAD data from .url
         if not self.is_loaded():
-            if self.url:
-                self.report('Trying to download data from "%s"' % self.url)
-                try:
-                    self.download_data()    # downloading...
-                    self.report('Downloaded data from "%s"' % self.url)
-                except error.URLError:
-                    self.report('Cannot download data from "%s"' % self.url)
+            if self.have_url():
+                self.download_data()    # downloading...
 
-        # 3) still no data has been loaded
-        if not self.is_loaded() and (self.path or self.url):
-            message = '\n- Cannot load data from "%s"' % self.path
-            message += '\n- Cannot download data from "%s"' % self.url
-            message += '\n\n Please check:'
-            message += '\n- file path'
-            message += '\n- URL'
-            message += '\n- internet connection'
-            raise FileNotFoundError(message)
+        # 3) finally...
+        if self.is_loaded():
+            # loading report
+            self.report('Data has been successfully loaded\n')
         else:
-            if self.is_loaded():
-                if len(self) < 10**3:
-                    message = '%d B' % len(self)
-                else:
-                    message = '%f kB' % round(len(self)/1000, 3)
-                self.report('Data has been successfully loaded (' + message + ')\n')
+            # not loaded...
+            if self.have_path() or self.have_url():
+                # ...but path/url provided
+                message = '\n- Cannot load data from "%s"' % self.path
+                message += '\n- Cannot download data from "%s"' % self.url
+                message += '\n\n Please check:' + '\n- file path' + '\n- URL' + '\n- internet connection'
+                raise FileNotFoundError(message)
             else:
+                # ...and path/url not provided
                 self.report('Warning: This file is empty, use .load_from_file or .download_data to load data')
 
+    def load_var(self, data):
+        """load data from variable, .data must be str"""
+        if type(data) == pd.DataFrame:  # DataFrame
+            self.data = data
+        elif type(data) == list:    # matrix
+            self.data = pd.DataFrame(data)
+            self.report('Converted list to pd.DataFrame')
+        elif type(data) == str:     # string
+            try:
+                self.data = pd.DataFrame(string_to_matrix(data))
+            except Exception as e:
+                self.report('[' + str(e) + '] error when converting "%s"' % self.path)
+            else:
+                self.report('Converted str to pd.DataFrame')
+        else:
+            self.report('Could not convert data to pd.DataFrame!')
+
     def __call__(self) -> pd.DataFrame:
-        return self.tab
+        return self.data
 
     def __len__(self):
-        if self.is_loaded():
-            return len(self.data)
-        else:
-            return 0
+        return len(self()) if self.is_loaded() else 0
 
     def __getitem__(self, item):
         return self()[item]
@@ -162,31 +203,45 @@ class File:
 
     def apply(self, func):
         """apply func on .tab"""
-        for i in self.tab:
-            for j in range(len(self.tab[i])):
-                self.tab[i][j] = func(self.tab[i][j])
+        for i in self():
+            for j in range(len(self()[i])):
+                self[i][j] = func(self()[i][j])
 
     def to_float(self):
-        # self.apply(soft_to_float)
         self.apply(soft_to_float)
+
+    def del_file(self):
+        try:
+            os.remove(self.path)
+        except FileNotFoundError:
+            pass
+
+
+def test_1():
+    """download & save & load_file"""
+    print('\n\n\t TEST 1 \n')
+    url = 'https://raw.githubusercontent.com/Omega97/google_hash/master/example/problems/a_example.txt'
+    path = 'data.pkl'
+    os.remove(path)
+    f = File(url=url, path=path, do_report=True)
+    f.save()
+    f.load_file(path)
+    print(f)
+
+
+def test_2():
+    """load & save & load_file"""
+    print('\n\n\t TEST 2 \n')
+    path = 'data.pkl'
+    os.remove(path)
+    f = File(do_report=True)
+    data = pd.DataFrame([[1, 2], [3, 4]], columns=['C1', 'C2'], index=['I1', 'I2'])
+    f.load_var(data)
+    f.save(path)
+    f.load_file(path)
+    print(f)
 
 
 if __name__ == '__main__':
-
-    from omar_utils.basic.file_basics import del_file
-
-    URL = 'https://raw.githubusercontent.com/Omega97/google_hash/master/example/problems/a_example.txt'
-    PATH = 'data1.txt'
-
-    del_file(PATH)
-
-    f = File(url=URL, path=PATH, do_report=True)
-    f.to_float()
-    print(f)
-    f.save()
-
-    f = File(path=PATH, do_report=True)
-    print(f)
-
-    f = File(url=None, path=None, do_report=True)
-    print(f)
+    test_1()
+    test_2()
