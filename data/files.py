@@ -105,11 +105,11 @@ class File:
             self.report('[' + str(e) + '] error when loading "%s"' % self.path)
         else:
             # file loaded
-            self.report('Loaded data from file "%s"' % self.path)
-            self.report_size()
+            self.report('Loaded data from file "%s"' % self.path)            
             if self.have_url():
                 self.report('An URL has been provided, but data has been loaded from locally anyway')
-
+            self.report_size()
+                
     def download_data(self, url=None):
         """download data form the web using the URL, self.data -> matrix"""
         if url:
