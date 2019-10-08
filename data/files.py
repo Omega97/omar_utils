@@ -174,7 +174,7 @@ class File:
             self.report('Converted list to pd.DataFrame')
         elif type(data) == str:     # string
             try:
-                self.data = pd.DataFrame(string_to_matrix(data))
+                self.data = pd.DataFrame(string_to_matrix(data, separator=self.separator))
             except Exception as e:
                 self.report('[' + str(e) + '] error when converting "%s"' % self.path)
             else:
