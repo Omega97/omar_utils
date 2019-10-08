@@ -6,7 +6,6 @@ File(url, path)
 When initialized, tries to load the file as string to .data
 If unsuccessful, tries to download data from the web (as string to .data)
 """
-# todo download needs index + columns
 from urllib import request, error
 import os
 import pandas as pd
