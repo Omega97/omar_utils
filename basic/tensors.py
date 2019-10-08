@@ -4,7 +4,7 @@ tensor = essentially a list of lists
 This library is also an exercise of "list comprehensions"
 """
 __author__ = "Omar Cusma Fait"
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 
 def apply_to_tensor(v, fun):
@@ -226,8 +226,8 @@ def soft_to_float(x):
 
 
 def string_to_matrix(s, separator=None):
-    """str -> matrix"""
-    return [[j for j in i.split(separator)] for i in s.split('\n')]
+    """str -> matrix (removes ampty lines)"""
+    return [[j for j in i.split(separator)] for i in s.split('\n') if i]
 
 
 if __name__ == "__main__":
