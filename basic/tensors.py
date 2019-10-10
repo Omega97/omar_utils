@@ -4,7 +4,7 @@ tensor = essentially a list of lists
 This library is also an exercise of "list comprehensions"
 """
 __author__ = "Omar Cusma Fait"
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 
 
 def apply_to_tensor(v, fun):
@@ -214,20 +214,19 @@ def split_tensor(v, separator=None):
 
 
 def soft_to_float(x):
-    """convert to float if possible, convert to int if x is integer"""    
+    """convert to float if possible, convert to int if x is integer"""
     try:
-        x = float(x)
+        return int(x) if int(x) == float(x) else float(x)
     except ValueError:
-        return x    # not a number
-    if int(x) == x:
-        return int(x)   # integer
-    else:
-        return x    # float
+        return x
+    except TypeError:
+        return x
 
 
 def string_to_matrix(s, separator=None):
-    """str -> matrix (removes ampty lines)"""
-    return [[j for j in i.split(separator)] for i in s.split('\n') if i]
+    """str -> matrix"""
+    v = [[j for j in i.split(separator)] for i in s.split('\n')]
+    return [i for i in v if i != [''] and i != []]
 
 
 if __name__ == "__main__":
