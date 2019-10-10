@@ -14,7 +14,8 @@ from sys import getsizeof
 
 
 class File:
-    def __init__(self, path=None, url=None, separator=None, encoding="UTF-8", do_report=False):
+    def __init__(self, path=None, url=None, separator=None,
+                 encoding="UTF-8", do_report=False, first_line_columns=False):
         """
         A File is used to load and store data as pd.DataFrames / .pkl files
         - download data from web as string (data is stored in .data as pd.DataFrame)
@@ -32,6 +33,7 @@ class File:
         self.data = None
         self.separator = separator
         self.encoding = encoding
+        self.first_line_columns = first_line_columns
         self.do_report = do_report
         self.set_path(path)
         self.loading_sequence()
@@ -51,10 +53,12 @@ class File:
 
     def report_size(self):
         size = getsizeof(self())
-        if size < 1000:
+        if size < 10**3:
             message = '%d B' % size
+        elif 10**3 <= size < 10**6:
+            message = '%.2f kB' % (size / 10 ** 3)
         else:
-            message = '%.3f kB' % (size / 10 ** 3)
+            message = '%.2f MB' % (size / 10 ** 6)
         self.report('Data size = ' + message + '\n')
 
     def is_loaded(self):
@@ -105,13 +109,13 @@ class File:
             self.report('[' + str(e) + '] error when loading "%s"' % self.path)
         else:
             # file loaded
-            self.report('Loaded data from file "%s"' % self.path)            
+            self.report('Loaded data from file "%s"' % self.path)
             if self.have_url():
                 self.report('An URL has been provided, but data has been loaded from locally anyway')
             self.report_size()
-                
+
     def download_data(self, url=None):
-        """download data form the web using the URL, self.data -> matrix"""
+        """forces download of data form the web using the URL, self.data -> matrix"""
         if url:
             self.url = url
         self.report('Trying to download data from "%s"' % self.url)
@@ -174,7 +178,14 @@ class File:
             self.report('Converted list to pd.DataFrame')
         elif type(data) == str:     # string
             try:
-                self.data = pd.DataFrame(string_to_matrix(data, separator=self.separator))
+                if self.first_line_columns:
+                    # use first line as columns names
+                    v = data.split('\n')
+                    columns = v[0].split(self.separator)
+                    data_ = '\n'.join(v[1:])
+                    self.data = pd.DataFrame(string_to_matrix(data_, separator=self.separator), columns=columns)
+                else:
+                    self.data = pd.DataFrame(string_to_matrix(data, separator=self.separator))
             except Exception as e:
                 self.report('[' + str(e) + '] error when converting "%s"' % self.path)
             else:
@@ -221,26 +232,53 @@ def test_1():
     print('\n\n\t TEST 1 \n')
     url = 'https://raw.githubusercontent.com/Omega97/google_hash/master/example/problems/a_example.txt'
     path = 'data.pkl'
-    os.remove(path)
     f = File(url=url, path=path, do_report=True)
     f.save()
     f.load_file(path)
     print(f)
+    f.del_file()
 
 
 def test_2():
     """load & save & load_file"""
     print('\n\n\t TEST 2 \n')
     path = 'data.pkl'
-    os.remove(path)
     f = File(do_report=True)
     data = pd.DataFrame([[1, 2], [3, 4]], columns=['C1', 'C2'], index=['I1', 'I2'])
     f.load_var(data)
     f.save(path)
     f.load_file(path)
     print(f)
+    f.del_file()
+
+
+def test_3():
+    """example"""
+    print('\n\n\t TEST 3 \n')
+    url = 'https://raw.githubusercontent.com/ageron/handson-ml/master/datasets/housing/housing.csv'
+    path = 'data'
+    f = File(url=url, path=path, separator=',', first_line_columns=True, do_report=True)
+    f.download_data()
+    print(f)
+    f.del_file()
+
+
+def test_4():
+    """example 2"""
+    print('\n\n\t TEST 4 \n')
+    data = [[1, 2], [3, 4]]
+    data = pd.DataFrame(data, columns=['C1', 'C2'], index=['I1', 'I2'])
+    f = File(do_report=True)
+    f.load_var(data)
+    print(f)
+    print()
+    for i in f:
+        for j in f[i]:
+            print(j, '\t', type(j))
 
 
 if __name__ == '__main__':
     test_1()
     test_2()
+    test_3()
+    test_4()
