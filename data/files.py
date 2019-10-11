@@ -14,7 +14,7 @@ from sys import getsizeof
 
 
 class File:
-    def __init__(self, path=None, url=None, separator=None,
+    def __init__(self, path=None, url=None, separator=",",
                  encoding="UTF-8", do_report=False, first_line_columns=False):
         """
         A File is used to load and store data as pd.DataFrames / .pkl files
