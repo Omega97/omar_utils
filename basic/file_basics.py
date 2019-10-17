@@ -17,10 +17,10 @@ def read_file(path, encoding='utf-8') -> str:
         return file.read()
 
 
-def append_file(path, text, new_line='\n'):
+def append_file(path, text, new_line='\n', encoding='utf-8'):
     """append text to file"""
-    with open(path, 'a') as file:
-        file.write(new_line + text)
+    with open(path, 'a', encoding=encoding) as file:
+        file.write(text + new_line)     # or reversed?
         file.close()
 
 
