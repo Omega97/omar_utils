@@ -1,14 +1,19 @@
 """ Basic operations with files"""
+__author__ = "Omar Cusma Fait"
+__version__ = "1.0.4"
+
 from os import makedirs, listdir, remove
-from omar_utils.basic.tensors import tensor_to_string, apply_to_tensor, soft_to_float
+from omar_utils.basic.tensors import tensor_to_string, apply_to_tensor, convert_to_number
 import shutil
+
+
+# --- Basic file handling ----------------------------------------------------------------
 
 
 def write_file(path, text, encoding='utf-8'):
     """rewrite file"""
-    with open(path, "w", encoding=encoding) as file:
+    with open(path, 'w', encoding=encoding) as file:
         file.write(text)
-        file.close()
 
 
 def read_file(path, encoding='utf-8') -> str:
@@ -17,11 +22,20 @@ def read_file(path, encoding='utf-8') -> str:
         return file.read()
 
 
-def append_file(path, text, new_line='\n', encoding='utf-8'):
+def file_reader(path, encoding='utf-8'):
+    """file reading generator, reads file one line at the time, faster with huge files"""
+    with open(path, 'r', encoding=encoding) as file:
+        while True:
+            line = file.readline()
+            if not line:
+                break
+            yield line
+
+
+def append_file(path, text, new_line='\n'):
     """append text to file"""
-    with open(path, 'a', encoding=encoding) as file:
-        file.write(text + new_line)     # or reversed?
-        file.close()
+    with open(path, 'a') as file:
+        file.write(new_line + text)
 
 
 def make_dir(path):
@@ -48,6 +62,9 @@ def del_file(path):
         pass
 
 
+# --- Lists ----------------------------------------------------------------
+
+
 def list_files_in_dir(path):
     """ :returns list of files in path, None if path not found (./ indicates the dir of the file) """
     try:
@@ -56,10 +73,9 @@ def list_files_in_dir(path):
         return
 
 
-def file_to_list(path):
-    """takes dec file and splits it in dec list of lists dividing strings (removes blank lines)"""
-    v = [x for x in read_file(path).split('\n') if x != '']
-    return apply_to_tensor(v, soft_to_float)
+def file_to_list(path):  # modified
+    """returns file as list of strings (remove empty lines)"""
+    return [x for x in read_file(path).split('\n') if x != '']
 
 
 def list_to_file(path, v):
@@ -69,19 +85,21 @@ def list_to_file(path, v):
 
 def tab_to_file(path, data, separator='\t'):
     """" save tensor in file """
-    file = open(path, 'w')
-    file.write(tensor_to_string(data, separator=separator))
-    file.close()
+    write_file(path, text=tensor_to_string(data, separator=separator))
 
 
 def file_to_tab(path, splitter=None):
-    """convert file to matrix"""
-    return apply_to_tensor([i.split(splitter) for i in file_to_list(path)], soft_to_float)
+    """convert file to matrix (drop empty lines)"""
+    v = [i.split(splitter) for i in file_to_list(path)]
+    return apply_to_tensor([i for i in v if len(i)], convert_to_number)
 
 
 def file_split(path):
-    """takes dec file and splits it in dec list of lists keeping strings together (removes blank lines)"""
+    """takes a file and splits it in a list of lists keeping strings together (removes blank lines)"""
     return [x.split() for x in read_file(path).split("\n") if x != '']
+
+
+# --- Tests ----------------------------------------------------------------
 
 
 if __name__ == "__main__":
