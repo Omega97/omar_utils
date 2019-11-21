@@ -5,18 +5,19 @@
 - use .total() to get total time
 """
 __author__ = "Omar Cusma Fait"
-__version__ = "1.0.2"
+__version__ = "1.0.1"
 
 from time import time
 
 
 class Timer:
     """timer"""
-    def __init__(self, tag='', precision=3):
+    def __init__(self, tag='', precision=3, show=True):
         self.t = time()
         self.tot_t = 0
         self.lapse = None
         self.precision = precision
+        self.show = show
         self.tag = tag
 
     def __repr__(self):
@@ -37,6 +38,8 @@ class Timer:
         timer_ = Timer()
         timer_.lapse = self.tot_t
         timer_.tag = tag
+        if self.show:
+            print(timer_)
         return self.tot_t
 
     def __call__(self, tag=None):
@@ -44,6 +47,8 @@ class Timer:
         if tag is not None:
             self.tag = str(tag)
         self.take_time()
+        if self.show:
+            print(self)
         return self
 
 
@@ -57,7 +62,7 @@ if __name__ == '__main__':
         # do stuff...
         sleep(2**I)
         # call to take time & print
-        print(timer(tag=I))
+        timer(tag=I)
         # use get_time to obtain time lapsed from last call
         if timer.get_time() < .01:
             print('fast!')
