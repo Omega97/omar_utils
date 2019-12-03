@@ -4,4 +4,4 @@
 Provides common and useful methods of all kinds
 """
 __author__ = "Omar Cusma Fait"
-__version__ = "1.1.1"
+__version__ = "1.1.2"
