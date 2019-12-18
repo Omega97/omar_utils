@@ -101,6 +101,9 @@ class Set:
         """apply fun on each element of the set"""
         return Set([fun(i) for i in self])
 
+    def __getitem__(self, item):
+        return list(self.elements)[item]
+
 
 if __name__ == '__main__':
 

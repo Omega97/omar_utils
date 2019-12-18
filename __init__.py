@@ -1,7 +1,10 @@
 """         omar_utils
 
-3/10/2019
 Provides common and useful methods of all kinds
 """
+from omar_utils.basic.iter_utils import *
+
+
 __author__ = "Omar Cusma Fait"
-__version__ = "1.1.2"
+__date__ = (18, 12, 2019)
+__version__ = "1.2.0"
