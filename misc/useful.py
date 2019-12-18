@@ -1,27 +1,25 @@
-"""
+"""         Useful
 Collection of useful 'implement once' methods
 """
+__author__ = "Omar Cusma Fait"
+__date__ = (16, 12, 2019)
+__version__ = '1.0.1'
 
 
-def loop_range(length: int, n: int, start=0, step=1):
-    """range, but loop once index is over length"""
-    for i in range(n):
-        yield (start + i * step) % length
-
-
-def loop_iter(v, n: int, start=0, step=1):
-    """like range but loop instead of stopping at the end"""
-    for i in range(n):
-        j = (start + i * step) % len(v)
-        yield v[j]
-
-
-def q_print(v, pre_print=''):
-    """print iterable"""
-    if pre_print is not None:
-        print(pre_print)
-    for i in v:
-        print(i)
+def describe(item, starts_with=None, has_in_name=None):
+    """print all attributes of item and more"""
+    print(f'\n{type(item).__name__} object\n')
+    for name in dir(item):
+        do_print = True
+        if starts_with:
+            if not name[:len(starts_with)] == starts_with:
+                do_print = False
+        if has_in_name:
+            if has_in_name not in name:
+                do_print = False
+        if do_print:
+            print(name)
+    return dir(item)
 
 
 def nested_print(x, depth=-1):
@@ -34,27 +32,23 @@ def nested_print(x, depth=-1):
         print(x)
 
 
-def recursive_iter(depth, args=None, generator=None):
+class Default:
     """
-    iterate recursively (nested "for" loops)
-    :param depth: number of nested loops
-    :param args: args that go in range()
-    :param generator: range by default, can be any generator
+    D = Default
+    x |D (default)  <<< returns x if x is not None, else  returns default
     """
-    args = tuple() if args is None else args
-    generator = range if generator is None else generator
+    def __init__(self, value):
+        self.value = value
 
-    if depth <= 1:
-        for i in generator(*args):
-            yield (i,)
-    else:
-        for i in generator(*args):
-            for j in recursive_iter(depth - 1, args=args, generator=generator):
-                yield (i,) + j
+    def __ror__(self, other):
+        return self.value if other is None else other
 
 
 if __name__ == '__main__':
-    V = ['a', 'b', 'c']
-    q_print(loop_range(10, 10, -1, 2))
-    q_print(loop_iter(V, 10, -1))
-    q_print(recursive_iter(3, 2))
+
+    describe(list, starts_with='_', has_in_name='l')
+
+    print()
+    D = Default
+    print(None | D(1))
+    print(2 | D(1))
