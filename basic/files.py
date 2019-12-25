@@ -87,6 +87,18 @@ def file_split(path):
     return [x.split() for x in read_file(path).split("\n") if x != '']
 
 
+def save_obj(obj, path):
+    """save obj as pickle file"""
+    with open(path, "wb") as f:
+        pickle.dump(list(obj), f)
+
+
+def load_obj(path):
+    """load obj from pickle file"""
+    with open(path, "rb") as f:
+        return pickle.load(f)
+
+
 if __name__ == "__main__":
 
     Name = 'data.txt'
