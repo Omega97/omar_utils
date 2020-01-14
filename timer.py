@@ -14,45 +14,28 @@ from time import time, sleep
 
 
 class Timer:
-    """timer: call to take time from last call (first time from init)"""
-    def __init__(self, tag='', precision=3, show=True):
-        self.t = time()
-        self.tot_t = 0
-        self.lapse = None
-        self.precision = precision
-        self.show = show
-        self.tag = tag
+    """timer: call to take time from last call (or from initialization)"""
+    def __init__(self):
+        self.last_call = time()     # time of last call
+        self.t = None   # time lapsed from last call
 
     def __repr__(self):
-        return f"\t[  {self.get_time():.{str(self.precision)}f} s  ] \t {self.tag}"
+        self()
+        return f"{self.get_time():.3f} s"
 
-    def take_time(self):
+    def _take_time(self):
         """takes time and computes lapse"""
         t = time()
-        self.lapse = t - self.t
-        self.tot_t += self.lapse
-        self.t = t
+        self.t = t - self.last_call
+        self.last_call = t
 
     def get_time(self):
-        """:returns time lapsed from last call"""
-        return self.lapse
+        return self.t
 
-    def total(self, tag='TOT'):
-        timer_ = Timer()
-        timer_.lapse = self.tot_t
-        timer_.tag = tag
-        if self.show:
-            print(timer_)
-        return self.tot_t
-
-    def __call__(self, tag=None):
+    def __call__(self):
         """call to take time from last call"""
-        if tag is not None:
-            self.tag = str(tag)
-        self.take_time()
-        if self.show:
-            print(self)
-        return self
+        self._take_time()
+        return self.get_time()
 
 
 # -------------------------------- CumulativeTimers --------------------------------
@@ -127,21 +110,16 @@ def _test_timer():
 
     timer = Timer()
 
-    for I in range(-11, -1):
-        # do stuff...
-        sleep(2**I)
-        # call to take time & print
-        timer(tag=I)
-        # use get_time to obtain time lapsed from last call
-        if timer.get_time() < .01:
-            print('fast!')
+    sleep(.1)
+    print(timer())
 
-    timer.total()
+    sleep(.2)
+    print(timer())
 
 
 def _test_cumulative_timers():
 
-    T = CumulativeTimers(dec=4)
+    T = CumulativeTimers(dec=3)
 
     T.start('a')
 
@@ -151,12 +129,16 @@ def _test_cumulative_timers():
         sleep(.1)
         T.stop('b')
 
+        T.start('c')
+        sleep(.05)
+        T.stop('c')
+
     sleep(.15)
     T.stop('a')
 
-    T.start('c')
+    T.start('d')
     sleep(.6)
-    T.stop('c')
+    T.stop('d')
 
     print(T)
     print(T['a'])
