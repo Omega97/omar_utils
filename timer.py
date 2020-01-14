@@ -5,7 +5,8 @@
 - use .total() to get total time
 """
 __author__ = "Omar Cusma Fait"
-__version__ = "1.0.2"
+__version__ = "1.0.3"
+__date__ = (14, 1, 2020)
 
 from time import time, sleep
 
@@ -46,13 +47,14 @@ class CumulativeTimers:
     start(name) to start a timer with that name
     stop(name) to stop the timer
     print() to show every timer
-    time gets added from start to stop
+    the time between start() to stop() gets added to the timer
     """
 
     def __init__(self, dec=4):
-        self.timers = dict()
-        self.name = None
-        self.dec = dec
+        self.timers = dict()        # dict of {name: time}, describes time from start to stop
+        self.last_calls = dict()    # time of last call of each timer
+        self.dec = dec              # decimal digits
+        self.last_name = None       # last timer name used, avoids writing names every time
 
     def __getitem__(self, item):
         try:
@@ -60,47 +62,68 @@ class CumulativeTimers:
         except KeyError:
             error = True
         if error:
-            c = '"'
-            raise(KeyError(f"use start({c}{self.name}{c}) to start the timer before stopping it"))
+            raise(KeyError(f"timer {item} not found!"))
+
+    def __setitem__(self, key, value):
+        self.timers[key] = value
+
+    def __iter__(self):
+        """iter through timer names"""
+        return iter(self.timers)
 
     def __repr__(self):
         tot = self.total()
 
         def line(name):
-            p = self[name]["t"]/tot
-            return f'{name} \t {self[name]["t"]:.{self.dec}f} s \t {p*100:.1f}% \t |{"=" * round(p*40)}'
+            p = self[name] / tot
+            return f'{name:<16}' \
+                   f'{self[name]:.{self.dec}f} s \t' \
+                   f'{p*100:.1f}% \t' \
+                   f'|{"=" * round(p*40)}'
 
-        return '\n' + '\n'.join(line(name) for name in self.timers) + '\n'
+        out = '\n' + '_' * 80 + '\n'
+        out += '\n'.join(line(name) for name in self.timers)
+        out += '\n' + '-' * 80 + '\n'
+        out += ' ' * 16 + f'{self.total():.{self.dec}f} s'
+        out += '\n' + '_' * 80 + '\n'
+
+        return out
+
+    def _check_name(self, name):
+        return self.last_name if name is None else name
 
     def _add_timer(self, name):
         if name not in self.timers:
-            self.timers.update({self.name: {'t': 0.}})
-
-    def _update_current_name(self, name):
-        if name:
-            self.name = name
-
-    def _current_timer(self):
-        return self[self.name]
-
-    def _take_time(self, name):
-        t0 = self[name]['last call']
-        if name and t0:
-            self[name]['t'] += time() - t0
-        self[name].pop('last call')
+            self.timers.update({name: 0.})
 
     def start(self, name=None):
-        self._update_current_name(name)
-        self._add_timer(self.name)
-        self._current_timer()['last call'] = time()
+        name = self._check_name(name)
+        self.last_name = name
+        self._add_timer(name)
+        self.last_calls[name] = time()
+
+    def __call__(self, name=None):
+        name = self._check_name(name)
+        self.start(name)
 
     def stop(self, name=None):
         """terminates current measure, adds t to the last timer"""
-        self._update_current_name(name)
-        self._take_time(self.name)
+        name = self._check_name(name)
+        t0 = self.last_calls[name]
+        if name and t0:
+            self[name] += time() - t0
+
+    def stop_all(self):
+        """stop all timers"""
+        for i in self:
+            self.stop(i)
 
     def total(self):
-        return sum(self[i]['t'] for i in self.timers)
+        """total time of all timers"""
+        return sum(self[i] for i in self.timers)
+
+    def get_timers(self):
+        return self.timers
 
 
 # -------------------------------- TIMERS --------------------------------
@@ -121,24 +144,24 @@ def _test_cumulative_timers():
 
     T = CumulativeTimers(dec=3)
 
-    T.start('a')
+    T.start('a')    # init timer 'a'
+    sleep(.1)
+    T.stop('a')
+
+    T('d')
+    sleep(.1)
 
     for I in range(5):
 
-        T.start('b')
+        T('b')  # like T.start('b')
         sleep(.01)
-        T.stop('b')
+        T.stop('b')     # stop timer 'b'
 
-        T.start('c')
-        sleep(.05)
-        T.stop('c')
+        T('c')
+        sleep(.02)
+        T.stop()    # stopping timer 'd'
 
-    sleep(.15)
-    T.stop('a')
-
-    T.start('d')
-    sleep(.2)
-    T.stop('d')
+    T.stop_all()    # stopping all timers
 
     print(T)
     print(T['a'])
