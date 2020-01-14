@@ -111,10 +111,10 @@ def _test_timer():
     timer = Timer()
 
     sleep(.1)
-    print(timer())
+    print(timer)    # print object
 
-    sleep(.2)
-    print(timer())
+    sleep(.15)
+    print(timer())  # print float value
 
 
 def _test_cumulative_timers():
@@ -123,10 +123,10 @@ def _test_cumulative_timers():
 
     T.start('a')
 
-    for I in range(3):
+    for I in range(5):
 
         T.start('b')
-        sleep(.1)
+        sleep(.01)
         T.stop('b')
 
         T.start('c')
@@ -137,7 +137,7 @@ def _test_cumulative_timers():
     T.stop('a')
 
     T.start('d')
-    sleep(.6)
+    sleep(.2)
     T.stop('d')
 
     print(T)
