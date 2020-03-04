@@ -8,8 +8,8 @@ from omar_utils.basic import files
 
 
 __author__ = "Omar Cusma Fait"
-__date__ = (26, 2, 2020)
-__version__ = "1.3.0"
+__date__ = (3, 3, 2020)
+__version__ = "1.3.1"
 
 
 if __name__ == '__main__':
