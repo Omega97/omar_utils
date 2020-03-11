@@ -11,8 +11,8 @@ from omar_utils.basic.decorators import Debug
 
 
 __author__ = "Omar Cusma Fait"
-__date__ = (9, 3, 2020)
-__version__ = "1.3.1"
+__date__ = (11, 3, 2020)
+__version__ = "1.3.2"
 
 
 if __name__ == '__main__':
