@@ -16,12 +16,30 @@ Computation(name='example', ...)
 import pickle
 from random import random
 import os
+import inspect
 
 
-def check(fun, dct):
+def get_args(f):
+    return tuple(inspect.signature(f).parameters)[:f.__code__.co_argcount]
+
+
+def accepts_kwargs(f):
+    for i in str(inspect.signature(f))[1:-1].split(', '):
+        if i.startswith('**'):
+            return True        
+    return False
+
+
+def check(fun, dct):    
     if type(dct) != dict:
         raise TypeError(f'"{fun.__name__}" must return a dict')
-    var_names = fun.__code__.co_varnames[0: fun.__code__.co_argcount]
+
+    var_names = get_args(fun)
+
+    # if fun accepts kwargs -> use all dct
+    if accepts_kwargs(fun):
+        return fun(**dct)
+    
     for i in var_names:
         if i not in dct:
             message = '\n'
@@ -29,7 +47,6 @@ def check(fun, dct):
             message += f'method "{fun.__name__}" requires "{i}"\n'
             message += 'provided:\n'
             message += str(dct) + '\n'
-            # message += f"Make sure the method '{fun.__name__}' isn't already used by an other computation"
             raise TypeError(message)
     return fun(**{i: dct[i] for i in var_names})
 
@@ -215,6 +232,6 @@ if __name__ == '__main__':
 
     # Example
     example_0()
-    example_1()
-    example_2()
-    example_3()
+    # example_1()
+    # example_2()
+    # example_3()
