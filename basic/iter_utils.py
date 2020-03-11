@@ -3,68 +3,35 @@
 Common tools to handle iterator
 """
 __author__ = "Omar Cusma Fait"
-__date__ = (3, 3, 2020)
+__date__ = (11, 3, 2020)
 __version__ = '1.3.0'
 
 from time import time
 
 
-def q_print(item, n=None):
-    """print an iterator (first n elements if n is defined) """
-    print()
-    for i in item:
-        if n is not None:
-            n -= 1
-            if n < 0:
-                return
-        print(i)
+def q_print(itr, n=0):
+    """print an iterable (first n elements) """
+    for i, x in enumerate(itr):
+        print(x)
+        if i + 1 == n:
+            return
 
 
 def gen_next_n(itr, n):
     """generator of next n items when called"""
-    for i in itr:
-        n -= 1
-        if n < 0:
-            break
-        yield i
-
-
-def gen_next_n_decorator(n):
-    """the decorated methods yield only n times (n > 0)"""
-    def wrap1(fun):
-        def wrap2(*a, **kw):
-            j = n
-            for i in fun(*a, **kw):
-                yield i
-                j -= 1
-                if not j:
-                    break
-        return wrap2
-    return wrap1
+    if n == 0:
+        return
+    for i, x in enumerate(itr):
+        yield x
+        if i + 1 == n:
+            return
 
 
 def one_in_n(itr, n):
     """yields only one element every n"""
-    j = n
-    for i in itr:
-        j -= 1
-        if not j:
-            yield i
-            j = n
-
-
-def one_in_n_decorator(n):
-    """the decorated methods yield only once every n times"""
-    def wrap1(fun):
-        def wrap2(*a, **kw):
-            j = n
-            for i in fun(*a, **kw):
-                j -= 1
-                if not j:
-                    yield i
-                    j = n
-        return wrap2
-    return wrap1
+    for i, x in enumerate(itr):
+        if i % n == 0:
+            yield x
 
 
 def filter_iter(itr, criterion):
@@ -76,10 +43,17 @@ def filter_iter(itr, criterion):
 
 def skip_n(itr, n):
     """skip n elements of itr """
-    for i in itr:
-        if n <= 0:
-            yield i
-        n -= 1
+    for i, x in enumerate(itr):
+        if i >= n:
+            yield x
+
+
+def read_file(path, encoding='utf-8'):
+    """read file line """
+    with open(path, encoding=encoding) as file:
+        for line in file:
+            if line != '\n':
+                yield line[:-1] if line[-1] == '\n' else line
 
 
 # ---- less used ----------------------------------------------------------------
@@ -91,13 +65,6 @@ def count_outputs(itr):
     for i in itr:
         dct[i] = 1 if i not in dct else dct[i] + 1
         yield dct
-
-
-def cond_gen(itr, cond):
-    """yield only when condition is met"""
-    for i in itr:
-        if cond(i):
-            yield i
 
 
 def gen_apply(itr, f):
@@ -145,6 +112,14 @@ def split_data(itr, p):
             count += 1
 
 
+def infinite_range():
+    """like range, but never ends"""
+    n = 0
+    while True:
+        yield n
+        n += 1
+
+
 # ---- time ----------------------------------------------------------------
 
 
@@ -162,14 +137,6 @@ def yield_clock(itr, period):
         if time() - t > period:
             t += period
             yield i
-
-
-def get_time_iter(itr):
-    """:returns time it takes to iter over itr"""
-    t0 = time()
-    for _ in itr:
-        pass
-    return time() - t0
 
 
 # ---- SPECIAL ----------------------------------------------------------------
@@ -209,7 +176,39 @@ def tensor_gen(shape):
         yield tuple()
 
 
+# -------------------------------------------------------------------
+
+
+def gen_next_n_decorator(n):
+    """the decorated methods yield only n times (n > 0)"""
+    def wrap1(fun):
+        def wrap2(*a, **kw):
+            j = n
+            for i in fun(*a, **kw):
+                yield i
+                j -= 1
+                if not j:
+                    break
+        return wrap2
+    return wrap1
+
+
+def one_in_n_decorator(n):
+    """the decorated methods yield only once every n times"""
+    def wrap1(fun):
+        def wrap2(*a, **kw):
+            j = n
+            for i in fun(*a, **kw):
+                j -= 1
+                if not j:
+                    yield i
+                    j = n
+        return wrap2
+    return wrap1
+
+
 # ---- TESTS ----------------------------------------------------------------
+
 
 def wrap_itr(itr, fun):
     """wrap fun around iterable"""
@@ -218,32 +217,18 @@ def wrap_itr(itr, fun):
 
 
 def __test_the_important_ones():
-    def inf_range():
-        n = 0
-        while True:
-            yield n
-            n += 1
-
-    a = inf_range()
-    a = skip_n(a, 1)
-    a = one_in_n(a, 5)
-    a = gen_next_n(a, 5)
-    q_print(a)
+    a = infinite_range()
+    a = skip_n(a, 2)
+    a = one_in_n(a, 4)
+    assert list(gen_next_n(a, 4)) == [2, 6, 10, 14]
+    assert list(gen_next_n(a, 2)) == [18, 22]
 
 
 def __test_count_outputs():
     v = [1, 1, 1, 2, 2, 4]
-    q_print(count_outputs(v))
-
-
-def __test_yield_clock():
-    a = (yield_clock(yield_time(), .25))
-    a = wrap_itr(a, lambda x: f'{x:.3f} s')
-    a = gen_next_n(a, 4)
-    q_print(a)
+    assert list(count_outputs(v))[-1] == {1: 3, 2: 2, 4: 1}
 
 
 if __name__ == '__main__':
     __test_the_important_ones()
     __test_count_outputs()
-    __test_yield_clock()
