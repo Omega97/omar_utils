@@ -74,7 +74,7 @@ class Computation:
         self.display_method = display_data if display_data else lambda **kw: str(kw)
         self.data = None
         self.show = show
-        self.display(f'\n\nInitializing "{self.name}"\n')
+        self.display(f'\n\nInitializing "{self.name}"')
 
         # try to resume computation
         self.retrieve_data()
@@ -95,7 +95,7 @@ class Computation:
         try:
             with open(self.path(), "rb") as f:
                 self.data = pickle.load(f)
-                self.display('Data loaded successfully!\n')
+                self.display('Data loaded successfully!')
         except FileNotFoundError:
             pass
 
