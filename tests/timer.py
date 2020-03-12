@@ -1,11 +1,32 @@
 """ Timer
+
+Timer class
+
 - initialize a timer
 - call it to take time passed from last call
 - use .get_time() to get time lapsed
 - use .total() to get total time
+
+
+CumulativeTimers
+
+track multiple methods at the same time
+
+
+CumulativeTimers.decorator
+
+Inside a class MyClass, write:
+timer = CumulativeTimers()
+
+Decore your methods with:
+@timer.decorator()
+
+At the end, display results
+print(MyClass.timer)
 """
 __author__ = "Omar Cusma Fait"
-__version__ = "1.0.2"
+__version__ = "1.1.0"
+__date__ = (12, 3, 2020)
 
 from time import time, sleep
 
@@ -49,7 +70,7 @@ class CumulativeTimers:
     time gets added from start to stop
     """
 
-    def __init__(self, dec=4):
+    def __init__(self, dec=2):
         self.timers = dict()
         self.name = None
         self.dec = dec
@@ -65,6 +86,9 @@ class CumulativeTimers:
 
     def __repr__(self):
         tot = self.total()
+
+        if not tot:
+            return 'No data to display'
 
         def line(name):
             p = self[name]["t"]/tot
@@ -102,6 +126,27 @@ class CumulativeTimers:
     def total(self):
         return sum(self[i]['t'] for i in self.timers)
 
+    def decorator(self):
+        """
+        Inside a class MyClass, write:
+        timer = CumulativeTimers()
+
+        Decore your methods with:
+        @timer.decorator()
+
+        At the end, display results
+        print(MyClass.timer)
+        """
+        def wrap(fun):
+            def wrap2(*args, **kwargs):
+                name = fun.__name__
+                self.start(name)
+                out = fun(*args, **kwargs)
+                self.stop(name)
+                return out
+            return wrap2
+        return wrap
+
 
 # -------------------------------- TIMERS --------------------------------
 
@@ -114,10 +159,12 @@ def _test_timer():
         # do stuff...
         sleep(2**I)
         # call to take time & print
-        timer(tag=I)
+        timer()
         # use get_time to obtain time lapsed from last call
         if timer.get_time() < .01:
             print('fast!')
+        else:
+            print('not so fast!')
 
 
 def _test_cumulative_timers():
@@ -148,6 +195,27 @@ def _test_cumulative_timers():
     print(T['a'])
 
 
+def _test_cumulative_timers_decorator():
+
+    class Class:
+        timer = CumulativeTimers()
+
+        @timer.decorator()
+        def foo(self):
+            sleep(.2)
+
+        @timer.decorator()
+        def bar(self):
+            sleep(.3)
+
+    c = Class()
+    c.foo()
+    c.bar()
+
+    print(Class.timer)
+
+
 if __name__ == '__main__':
     _test_timer()
     _test_cumulative_timers()
+    _test_cumulative_timers_decorator()
