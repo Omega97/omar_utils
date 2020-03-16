@@ -7,7 +7,7 @@ from omar_utils.basic import iter_utils
 from omar_utils.basic.iter_utils import *
 from omar_utils.basic import files
 from omar_utils.basic.files import load_obj, save_obj
-from omar_utils.basic.decorators import Debug
+from omar_utils.tests.unit_test import Debug
 
 
 __author__ = "Omar Cusma Fait"
