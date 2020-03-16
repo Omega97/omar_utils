@@ -2,7 +2,7 @@
 from copy import deepcopy
 
 
-def test_unit(value, expected_output=None, validation_method=None, name='', do_report=True):
+def unit_test(value, expected_output=None, validation_method=None, name='', do_report=True):
     """
     test whether dec method returns the correct value (or dec value accepted by validation_method)
     :param value: the value that you want to test
@@ -34,7 +34,6 @@ def test_unit(value, expected_output=None, validation_method=None, name='', do_r
     return False
 
 
-# temp
 def check(fun):
     """ check whether arguments of a function have been modified buy the function itself """
     def wrapper(*args):
@@ -61,17 +60,41 @@ def output_check(validation):
     return wrapper1
 
 
-if __name__ == "__main__":
+class Debug:
 
-    # TESTS
+    count = 0
 
+    def __call__(self, fun):
+        def wrap(*args, **kwargs):
+            s = f'{fun.__name__}('
+            if len(args):
+                s += f'{", ".join([str(i) for i in args])}'
+            if len(kwargs):
+                s += f', {", ".join([str(i) + "=" + str(kwargs[i]) for i in kwargs])}'
+            s += ')'
+            print('|\t' * (Debug.count))
+            print('|\t' * Debug.count, s)
+            Debug.count += 1
+            out = fun(*args, **kwargs)
+            s = f'{out}'
+            Debug.count -= 1
+            print('|\t' * (Debug.count + 1))
+            print('|\t' * Debug.count, s)
+            return out
+        return wrap
+
+
+# ------------------------------------------------------------------------
+
+
+def __test_1():
     @check
     def f(x):
         return x
 
-    test_unit(f(0), expected_output=0, name='ex 1')
-    test_unit(f(1), expected_output=0, name='ex 2')
-    test_unit(f(1), expected_output='dog???', name='ex 3')
+    unit_test(f(0), expected_output=0, name='ex 1')
+    unit_test(f(1), expected_output=0, name='ex 2')
+    unit_test(f(1), expected_output='dog???', name='ex 3')
 
     def valid(out) -> bool:
         return int(out) == out
@@ -81,3 +104,21 @@ if __name__ == "__main__":
         return x
 
     f(1)
+
+
+def __test_2():
+
+    @Debug()
+    def f(a, x=1):
+        return a + x
+
+    @Debug()
+    def g(b, y=2):
+        return f(b) + y
+
+    g(1)
+    g(1, y=0)
+
+
+if __name__ == "__main__":
+    __test_2()

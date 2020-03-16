@@ -1,79 +1,90 @@
 """ Timer
-
-Timer class
-
 - initialize a timer
 - call it to take time passed from last call
 - use .get_time() to get time lapsed
 - use .total() to get total time
-
-
-CumulativeTimers
-
-track multiple methods at the same time
-
-
-CumulativeTimers.decorator
-
-Inside a class MyClass, write:
-timer = CumulativeTimers()
-
-Decore your methods with:
-@timer.decorator()
-
-At the end, display results
-print(MyClass.timer)
 """
 __author__ = "Omar Cusma Fait"
-__version__ = "1.1.0"
-__date__ = (12, 3, 2020)
+__version__ = "1.2.0"
+__date__ = (14, 1, 2020)
 
 from time import time, sleep
 
 
-# -------------------------------- Timer --------------------------------
-
-
 class Timer:
-    """timer: call to take time from last call (or from initialization)"""
+    """ set "time" (in seconds), then
+    return:
+    True if called after "time" has passed,
+    False otw.
+    """
+    def __init__(self, t=None):
+        self.t0 = time()
+        self.time = t
+
+    def start(self, t=None):
+        self.t0 = time()
+        if t is not None:
+            self.time = t
+
+    def __call__(self, *args, **kwargs):
+        assert self.time is not None
+        t_ = time()
+        return t_ - self.t0 >= self.time
+
+
+class Clock:
+    """set "time_period" (in seconds), then:
+    return:
+    True once after time_period has expired, then timer is reset
+    False otw.
+    """
+    def __init__(self, time_period):
+        self.t0 = time()
+        self.last_t = self.t0
+        self.time_period = time_period
+
+    def start(self, time_period=None):
+        self.t0 = time()
+        if time_period is not None:
+            self.time_period = time_period
+
+    def __call__(self, *args, **kwargs):
+        t_ = time()
+        out = t_ - self.last_t >= self.time_period
+        n = (t_ - self.t0) // self.time_period
+        self.last_t = self.t0 + n * self.time_period
+        return out
+
+
+class Chronometer:
+    """call to take time from last call"""
     def __init__(self):
-        self.last_call = time()     # time of last call
-        self.t = None   # time lapsed from last call
-
-    def __repr__(self):
-        self()
-        return f"{self.get_time():.3f} s"
-
-    def _take_time(self):
-        """takes time and computes lapse"""
-        t = time()
-        self.t = t - self.last_call
-        self.last_call = t
-
-    def get_time(self):
-        return self.t
+        self.last_call = time()
 
     def __call__(self):
         """call to take time from last call"""
-        self._take_time()
-        return self.get_time()
+        t_ = time()
+        out = t_ - self.last_call
+        self.last_call = t_
+        return out
+
+    def __repr__(self):
+        return f"{self():.3f} s"
 
 
-# -------------------------------- CumulativeTimers --------------------------------
-
-
-class CumulativeTimers:
+class CumulativeChronometer:
     """multiple timers in one class
     start(name) to start a timer with that name
     stop(name) to stop the timer
     print() to show every timer
-    time gets added from start to stop
+    the time between start() to stop() gets added to the timer
     """
 
-    def __init__(self, dec=2):
-        self.timers = dict()
-        self.name = None
-        self.dec = dec
+    def __init__(self, dec=4):
+        self.timers = dict()        # dict of {name: time}, describes time from start to stop
+        self.last_calls = dict()    # time of last call of each timer
+        self.dec = dec              # decimal digits
+        self.last_name = None       # last timer name used, avoids writing names every time
 
     def __getitem__(self, item):
         try:
@@ -81,141 +92,134 @@ class CumulativeTimers:
         except KeyError:
             error = True
         if error:
-            c = '"'
-            raise(KeyError(f"use start({c}{self.name}{c}) to start the timer before stopping it"))
+            raise(KeyError(f"timer {item} not found!"))
+
+    def __setitem__(self, key, value):
+        self.timers[key] = value
+
+    def __iter__(self):
+        """iter through timer names"""
+        return iter(self.timers)
 
     def __repr__(self):
         tot = self.total()
 
-        if not tot:
-            return 'No data to display'
-
         def line(name):
-            p = self[name]["t"]/tot
-            return f'{name} \t {self[name]["t"]:.{self.dec}f} s \t {p*100:.1f}% \t |{"=" * round(p*40)}'
+            p = self[name] / tot
+            return f'{name:<16}' \
+                   f'{self[name]:.{self.dec}f} s \t' \
+                   f'{p*100:.1f}% \t' \
+                   f'|{"=" * round(p*40)}'
 
-        return '\n' + '\n'.join(line(name) for name in self.timers) + '\n'
+        out = '\n' + '_' * 80 + '\n'
+        out += '\n'.join(line(name) for name in self.timers)
+        out += '\n' + '-' * 80 + '\n'
+        out += ' ' * 16 + f'{self.total():.{self.dec}f} s'
+        out += '\n' + '_' * 80 + '\n'
+
+        return out
+
+    def _check_name(self, name):
+        return self.last_name if name is None else name
 
     def _add_timer(self, name):
         if name not in self.timers:
-            self.timers.update({self.name: {'t': 0.}})
-
-    def _update_current_name(self, name):
-        if name:
-            self.name = name
-
-    def _current_timer(self):
-        return self[self.name]
-
-    def _take_time(self, name):
-        t0 = self[name]['last call']
-        if name and t0:
-            self[name]['t'] += time() - t0
-        self[name].pop('last call')
+            self.timers.update({name: 0.})
 
     def start(self, name=None):
-        self._update_current_name(name)
-        self._add_timer(self.name)
-        self._current_timer()['last call'] = time()
+        name = self._check_name(name)
+        self.last_name = name
+        self._add_timer(name)
+        self.last_calls[name] = time()
+
+    def __call__(self, name=None):
+        name = self._check_name(name)
+        self.start(name)
 
     def stop(self, name=None):
         """terminates current measure, adds t to the last timer"""
-        self._update_current_name(name)
-        self._take_time(self.name)
+        name = self._check_name(name)
+        t0 = self.last_calls[name]
+        if name and t0:
+            self[name] += time() - t0
+
+    def stop_all(self):
+        """stop all timers"""
+        for i in self:
+            self.stop(i)
 
     def total(self):
-        return sum(self[i]['t'] for i in self.timers)
+        """total time of all timers"""
+        return sum(self[i] for i in self.timers)
 
-    def decorator(self):
-        """
-        Inside a class MyClass, write:
-        timer = CumulativeTimers()
-
-        Decore your methods with:
-        @timer.decorator()
-
-        At the end, display results
-        print(MyClass.timer)
-        """
-        def wrap(fun):
-            def wrap2(*args, **kwargs):
-                name = fun.__name__
-                self.start(name)
-                out = fun(*args, **kwargs)
-                self.stop(name)
-                return out
-            return wrap2
-        return wrap
+    def get_timers(self):
+        return self.timers
 
 
-# -------------------------------- TIMERS --------------------------------
+# ---------------------------------------------------------------
 
 
-def _test_timer():
-
-    timer = Timer()
-
-    for I in range(-11, -2):
-        # do stuff...
-        sleep(2**I)
-        # call to take time & print
-        timer()
-        # use get_time to obtain time lapsed from last call
-        if timer.get_time() < .01:
-            print('fast!')
-        else:
-            print('not so fast!')
+def __test_timer():
+    timer = Timer(.5)
+    for _ in range(3):
+        timer.start(.15 * (_ + 1))
+        sleep(.2)
+        print(timer())
+        sleep(.2)
+        print(timer())
+        sleep(.2)
+        print(timer())
+        print()
 
 
-def _test_cumulative_timers():
-
-    T = CumulativeTimers(dec=3)
-
-    T.start('a')
-
-    for I in range(3):
-
-        T.start('b')
-        sleep(.1)
-        T.stop('b')
-
-        T.start('c')
-        sleep(.05)
-        T.stop('c')
+def __test_clock():
+    clock = Clock(1.)
+    t_ = 0
+    dt = 0.15
+    while True:
+        sleep(dt)
+        t_ += dt
+        if clock():
+            print(round(t_, 2))
 
 
-    sleep(.15)
+def __test_chronometer():
+    chronometer = Chronometer()
+    sleep(.1)
+    print(chronometer())
+    sleep(.2)
+    print(chronometer())
+
+
+def __test_cumulative_timers():
+
+    T = CumulativeChronometer(dec=3)
+
+    T.start('a')    # init timer 'a'
+    sleep(.1)
     T.stop('a')
 
-    T.start('d')
-    sleep(.6)
-    T.stop('d')
+    T('d')
+    sleep(.1)
+
+    for I in range(5):
+
+        T('b')  # like T.start('b')
+        sleep(.01)
+        T.stop('b')     # stop timer 'b'
+
+        T('c')
+        sleep(.02)
+        T.stop()    # stopping timer 'd'
+
+    T.stop_all()    # stopping all timers
 
     print(T)
     print(T['a'])
 
 
-def _test_cumulative_timers_decorator():
-
-    class Class:
-        timer = CumulativeTimers()
-
-        @timer.decorator()
-        def foo(self):
-            sleep(.2)
-
-        @timer.decorator()
-        def bar(self):
-            sleep(.3)
-
-    c = Class()
-    c.foo()
-    c.bar()
-
-    print(Class.timer)
-
-
 if __name__ == '__main__':
-    _test_timer()
-    _test_cumulative_timers()
-    _test_cumulative_timers_decorator()
+    __test_timer()
+    __test_clock()
+    __test_chronometer()
+    __test_cumulative_timers()
