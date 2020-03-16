@@ -1,6 +1,9 @@
 """         Files
 
-Basic operations with files"""
+Basic operations with files
+
+save obj
+"""
 __author__ = "Omar Cusma Fait"
 __date__ = (18, 12, 2019)
 __version__ = '1.0.3'
@@ -8,6 +11,7 @@ __version__ = '1.0.3'
 from os import makedirs, listdir, remove
 from omar_utils.basic.tensors import tensor_to_string, apply_to_tensor, soft_to_float
 import shutil
+import pickle
 
 
 def write_file(path, text, encoding='utf-8'):
@@ -90,7 +94,7 @@ def file_split(path):
 def save_obj(obj, path):
     """save obj as pickle file"""
     with open(path, "wb") as f:
-        pickle.dump(list(obj), f)
+        pickle.dump(obj, f)
 
 
 def load_obj(path):
@@ -99,8 +103,7 @@ def load_obj(path):
         return pickle.load(f)
 
 
-if __name__ == "__main__":
-
+def __test():
     Name = 'data.txt'
 
     write_file(Name, 'a b c\n1 2 3')
@@ -120,3 +123,7 @@ if __name__ == "__main__":
     assert read_file(Name) == '古'
     assert type(read_file(Name)) == str
     del_file(Name)
+
+
+if __name__ == "__main__":
+    __test()
