@@ -3,20 +3,30 @@
 Common tools to handle iterator
 """
 __author__ = "Omar Cusma Fait"
-__date__ = (11, 3, 2020)
-__version__ = '1.3.0'
+__date__ = (25, 3, 2020)
+__version__ = '1.4.0'
 
 from time import time
 
 
+def take_out_last_arg(fun):
+    def wrap(n):
+        def wrap2(x):
+            return fun(x, n)
+        return wrap2
+    return wrap
+
+
 def q_print(itr, n=0):
     """print an iterable (first n elements) """
+    print()
     for i, x in enumerate(itr):
         print(x)
         if i + 1 == n:
             return
 
 
+@take_out_last_arg
 def gen_next_n(itr, n):
     """generator of next n items when called"""
     if n == 0:
@@ -27,6 +37,7 @@ def gen_next_n(itr, n):
             return
 
 
+@take_out_last_arg
 def one_in_n(itr, n):
     """yields only one element every n"""
     for i, x in enumerate(itr):
@@ -41,11 +52,35 @@ def filter_iter(itr, criterion):
             yield i
 
 
+@take_out_last_arg
 def skip_n(itr, n):
     """skip n elements of itr """
     for i, x in enumerate(itr):
         if i >= n:
             yield x
+
+
+@take_out_last_arg
+def group_by_n(itr, n):
+    c = tuple()
+    for i in itr:
+        c += tuple([i])
+        if len(c) >= n:
+            yield c
+            c = tuple()
+
+
+@take_out_last_arg
+def get_best_n(itr, n):
+    """itr must yield objects with __getitem__ and len >= 1 like (score, other)"""
+    store = [next(itr)]
+    for i in itr:
+        if i[0] >= store[-1][0]:
+            store += [i]
+            store.sort(reverse=True)
+            if len(store) > n:
+                store = store[:n]
+            yield tuple(store)
 
 
 def read_file(path, encoding='utf-8'):
@@ -67,6 +102,7 @@ def count_outputs(itr):
         yield dct
 
 
+@take_out_last_arg
 def gen_apply(itr, f):
     """apply f on elements of itr"""
     for i in itr:
@@ -218,10 +254,10 @@ def wrap_itr(itr, fun):
 
 def __test_the_important_ones():
     a = infinite_range()
-    a = skip_n(a, 2)
-    a = one_in_n(a, 4)
-    assert list(gen_next_n(a, 4)) == [2, 6, 10, 14]
-    assert list(gen_next_n(a, 2)) == [18, 22]
+    a = skip_n(2)(a)
+    a = one_in_n(4)(a)
+    assert list(gen_next_n(4)(a)) == [2, 6, 10, 14]
+    assert list(gen_next_n(2)(a)) == [18, 22]
 
 
 def __test_count_outputs():
