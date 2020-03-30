@@ -5,10 +5,60 @@
 - use .total() to get total time
 """
 __author__ = "Omar Cusma Fait"
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 __date__ = (14, 1, 2020)
 
 from time import time, sleep
+
+
+# ---------------------- time_decor ---------------------------
+
+
+TIME_STORE = dict()
+
+
+def time_decor(n=1):
+    """decor a function to chronometer it (repeat call n times), show results with show_times()"""
+    def _time_decor(fun):
+        def __time_decor(*args, **kwargs):
+            t = time()
+            out = None
+            for _ in range(n):
+                out = fun(*args, **kwargs)
+            t = (time() - t) / n
+            if fun.__name__ not in TIME_STORE:
+                TIME_STORE[fun.__name__] = {'list': []}
+            TIME_STORE[fun.__name__]['list'] += [t]
+            return out
+        return __time_decor
+    return _time_decor
+
+
+def show_times(width=18, bar_len=24, n_digits=3):
+    """display results of time_decor"""
+    for i in TIME_STORE:
+        TIME_STORE[i]['sum'] = sum(TIME_STORE[i]['list'])
+        TIME_STORE[i]['avg'] = TIME_STORE[i]['sum'] / len(TIME_STORE[i]['list'])
+
+    total_time = sum([TIME_STORE[i]['sum'] for i in TIME_STORE])
+    for i in TIME_STORE:
+        TIME_STORE[i]['norm'] = TIME_STORE[i]['sum'] / total_time if total_time else 0.
+
+    print('_' * (width * 2 + width // 2 + bar_len + 8))
+    print(f'\n{"NAME":>{width}}  '
+          f'{"TOTAL":>{width // 2}}  '
+          f'{"AVERAGE":>{width // 2}}  '
+          f'{"N CALLS":>{width // 2}}  ')
+    for i in TIME_STORE:
+        print(f'{i:>{width}}  '
+              f'{TIME_STORE[i]["sum"]:{width // 2}.{n_digits}f} s'
+              f'{TIME_STORE[i]["avg"]:{width // 2}.{n_digits}f} s'
+              f'{len(TIME_STORE[i]["list"]):{width // 2 + 2}}  '
+              f'|{"=" * int(round(TIME_STORE[i]["norm"] * bar_len))}')
+    print('\n', '_' * (width * 2 + width // 2 + bar_len + 8))
+
+
+# ---------------------- Timer ---------------------------
 
 
 class Timer:
@@ -159,6 +209,23 @@ class CumulativeChronometer:
 # ---------------------------------------------------------------
 
 
+def __test_time_decor():
+
+    @time_decor()
+    def f():
+        sleep(.15)
+
+    @time_decor()
+    def g():
+        sleep(.2)
+
+    f()
+    g()
+    g()
+
+    show_times()
+
+
 def __test_timer():
     timer = Timer(.5)
     for _ in range(3):
@@ -176,7 +243,7 @@ def __test_clock():
     clock = Clock(1.)
     t_ = 0
     dt = 0.15
-    while True:
+    for _ in range(20):
         sleep(dt)
         t_ += dt
         if clock():
@@ -219,7 +286,8 @@ def __test_cumulative_timers():
 
 
 if __name__ == '__main__':
-    __test_timer()
-    __test_clock()
-    __test_chronometer()
-    __test_cumulative_timers()
+    # __test_timer()
+    # __test_clock()
+    # __test_chronometer()
+    # __test_cumulative_timers()
+    __test_time_decor()
