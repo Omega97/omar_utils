@@ -4,17 +4,9 @@ Common tools to handle iterator
 """
 __author__ = "Omar Cusma Fait"
 __date__ = (25, 3, 2020)
-__version__ = '1.4.0'
+__version__ = '1.4.1'
 
 from time import time
-
-
-def take_out_last_arg(fun):
-    def wrap(n):
-        def wrap2(x):
-            return fun(x, n)
-        return wrap2
-    return wrap
 
 
 def q_print(itr, n=0):
@@ -26,23 +18,25 @@ def q_print(itr, n=0):
             return
 
 
-@take_out_last_arg
-def gen_next_n(itr, n):
-    """generator of next n items when called"""
-    if n == 0:
-        return
-    for i, x in enumerate(itr):
-        yield x
-        if i + 1 == n:
+def gen_next_n(n):
+    def _gen_next_n(itr):
+        """generator of next n items when called"""
+        if n == 0:
             return
-
-
-@take_out_last_arg
-def one_in_n(itr, n):
-    """yields only one element every n"""
-    for i, x in enumerate(itr):
-        if i % n == 0:
+        for i, x in enumerate(itr):
             yield x
+            if i + 1 == n:
+                return
+    return _gen_next_n
+
+
+def one_in_n(n):
+    def _one_in_n(itr):
+        """yields only one element every n"""
+        for i, x in enumerate(itr):
+            if i % n == 0:
+                yield x
+    return _one_in_n
 
 
 def filter_iter(itr, criterion):
@@ -52,39 +46,28 @@ def filter_iter(itr, criterion):
             yield i
 
 
-@take_out_last_arg
-def skip_n(itr, n):
-    """skip n elements of itr """
-    for i, x in enumerate(itr):
-        if i >= n:
-            yield x
+def skip_n(n):
+    def _skip_n(itr):
+        """skip n elements of itr """
+        for i, x in enumerate(itr):
+            if i >= n:
+                yield x
+    return _skip_n
 
 
-@take_out_last_arg
-def group_by_n(itr, n):
-    c = tuple()
-    for i in itr:
-        c += tuple([i])
-        if len(c) >= n:
-            yield c
-            c = tuple()
-
-
-@take_out_last_arg
-def get_best_n(itr, n):
-    """itr must yield objects with __getitem__ and len >= 1 like (score, other)"""
-    store = [next(itr)]
-    for i in itr:
-        if i[0] >= store[-1][0]:
-            store += [i]
-            store.sort(reverse=True)
-            if len(store) > n:
-                store = store[:n]
-            yield tuple(store)
+def group_by_n(n):
+    def _group_by_n(itr):
+        c = tuple()
+        for i in itr:
+            c += tuple([i])
+            if len(c) >= n:
+                yield c
+                c = tuple()
+    return _group_by_n
 
 
 def read_file(path, encoding='utf-8'):
-    """read file line """
+    """read file line by line (skip empty lines)"""
     with open(path, encoding=encoding) as file:
         for line in file:
             if line != '\n':
@@ -92,6 +75,20 @@ def read_file(path, encoding='utf-8'):
 
 
 # ---- less used ----------------------------------------------------------------
+
+
+def get_best_n(n):
+    def _get_best_n(itr):
+        """itr must yield objects with __getitem__ and len >= 1 like (score, other)"""
+        store = [next(itr)]
+        for i in itr:
+            if i[0] >= store[-1][0]:
+                store += [i]
+                store.sort(reverse=True)
+                if len(store) > n:
+                    store = store[:n]
+                yield tuple(store)
+    return _get_best_n
 
 
 def count_outputs(itr):
@@ -102,11 +99,18 @@ def count_outputs(itr):
         yield dct
 
 
-@take_out_last_arg
-def gen_apply(itr, f):
-    """apply f on elements of itr"""
-    for i in itr:
-        yield f(i)
+def gen_apply(itr):
+    def _gen_apply(f):
+        """apply f on elements of itr"""
+        for i in itr:
+            yield f(i)
+    return _gen_apply
+
+
+def gen_range(length: int, n: int, start=0, step=1):
+    """range, but loop once index is over length"""
+    for i in range(n):
+        yield (start + i * step) % length
 
 
 def loop_range(length: int, n: int, start=0, step=1):
@@ -243,13 +247,13 @@ def one_in_n_decorator(n):
     return wrap1
 
 
-# ---- TESTS ----------------------------------------------------------------
-
-
 def wrap_itr(itr, fun):
     """wrap fun around iterable"""
     for i in itr:
         yield fun(i)
+
+
+# ---- TESTS ----------------------------------------------------------------
 
 
 def __test_the_important_ones():
@@ -258,6 +262,7 @@ def __test_the_important_ones():
     a = one_in_n(4)(a)
     assert list(gen_next_n(4)(a)) == [2, 6, 10, 14]
     assert list(gen_next_n(2)(a)) == [18, 22]
+    assert list(group_by_n(2)(range(4))) == [(0, 1), (2, 3)]
 
 
 def __test_count_outputs():
