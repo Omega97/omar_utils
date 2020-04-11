@@ -3,13 +3,21 @@
 Common tools to handle iterator
 """
 __author__ = "Omar Cusma Fait"
-__date__ = (25, 3, 2020)
-__version__ = '1.4.1'
+__date__ = (11, 4, 2020)
+__version__ = '1.4.2'
 
 from time import time
+import os
+from random import random
+from itertools import tee
 
 
-def q_print(itr, n=0):
+# ----------------------------------------------------------------
+# ----------------------- frequently used ------------------------
+# ----------------------------------------------------------------
+
+
+def i_print(itr, n=0):
     """print an iterable (first n elements) """
     print()
     for i, x in enumerate(itr):
@@ -18,9 +26,15 @@ def q_print(itr, n=0):
             return
 
 
+def d_print(dct, width=8):
+    print()
+    for i in dct:
+        print(f'{i:>{width}} \t{dct[i]}')
+
+
 def gen_next_n(n):
+    """generator of next n items when called"""
     def _gen_next_n(itr):
-        """generator of next n items when called"""
         if n == 0:
             return
         for i, x in enumerate(itr):
@@ -31,24 +45,17 @@ def gen_next_n(n):
 
 
 def one_in_n(n):
+    """yields only one element every n"""
     def _one_in_n(itr):
-        """yields only one element every n"""
         for i, x in enumerate(itr):
             if i % n == 0:
                 yield x
     return _one_in_n
 
 
-def filter_iter(itr, criterion):
-    """yields only elements of itr that match the criterion"""
-    for i in itr:
-        if criterion(i):
-            yield i
-
-
 def skip_n(n):
+    """skip n elements of itr """
     def _skip_n(itr):
-        """skip n elements of itr """
         for i, x in enumerate(itr):
             if i >= n:
                 yield x
@@ -56,6 +63,7 @@ def skip_n(n):
 
 
 def group_by_n(n):
+    """group elements of itr in n-long tuples"""
     def _group_by_n(itr):
         c = tuple()
         for i in itr:
@@ -66,15 +74,141 @@ def group_by_n(n):
     return _group_by_n
 
 
+def group_by(stop_criterion):
+    def _group_by(itr):
+        c = []
+        for i in itr:
+            c += [i]
+            if stop_criterion(i):
+                yield c
+                c = []
+    return _group_by
+
+
+def filter_iter(criterion):
+    """skip from iter the elements that satisfy the criterion"""
+    def _selective_skip(itr):
+        for i in itr:
+            if not criterion(i):
+                yield i
+    return _selective_skip
+
+
+# ----------------------------------------------------------------
+# ---------------------------- files -----------------------------
+# ----------------------------------------------------------------
+
+
 def read_file(path, encoding='utf-8'):
-    """read file line by line (skip empty lines)"""
+    """read file line by line"""
     with open(path, encoding=encoding) as file:
         for line in file:
-            if line != '\n':
-                yield line[:-1] if line[-1] == '\n' else line
+            yield line[:-1] if line[-1] == '\n' else line
 
 
-# ---- less used ----------------------------------------------------------------
+def read_file_lines(path, encoding='utf-8'):
+    """read file line by line (skip empty lines)"""
+    return filter_iter(lambda x: x == '')(read_file(path, encoding))
+
+
+def gen_files(path, search_sub_dir=True):
+    """generate all paths of files in path"""
+    for root, dirs, files in os.walk(path):
+        for i in files:
+            do_yield = True if search_sub_dir else root == path
+            if do_yield:
+                yield root + '\\' + i
+
+
+def gen_dir(path, search_sub_dir=True):
+    """generate all names of directories in path"""
+    for root, dirs, files in os.walk(path):
+        for i in dirs:
+            do_yield = True if search_sub_dir else root == path
+            if do_yield:
+                yield root + '\\' + i
+
+
+# ----------------------------------------------------------------
+# --------------------------- strings ----------------------------
+# ----------------------------------------------------------------
+
+
+def skip_starts_with(*args: (str,)):
+    """skip all elements that start with an element in args"""
+    def _skip_starts_with(itr):
+        for i in itr:
+            do_yield = True
+            for j in args:
+                if i.startswith(j):
+                    do_yield = False
+                    break
+            if do_yield:
+                yield i
+    return _skip_starts_with
+
+
+def keep_starts_with(*args: (str,)):
+    """keep only elements that start with an element in args"""
+    def _skip_starts_with(itr):
+        for i in itr:
+            for j in args:
+                if i.startswith(j):
+                    yield i
+    return _skip_starts_with
+
+
+def skip_ends_with(*args: (str,)):
+    """skip all elements that start with an element in args"""
+    def _skip_starts_with(itr):
+        for i in itr:
+            do_yield = True
+            for j in args:
+                if i.endswith(j):
+                    do_yield = False
+                    break
+            if do_yield:
+                yield i
+    return _skip_starts_with
+
+
+def keep_ends_with(*args: (str,)):
+    """keep only elements that start with an element in args"""
+    def _skip_starts_with(itr):
+        for i in itr:
+            for j in args:
+                if i.endswith(j):
+                    yield i
+    return _skip_starts_with
+
+
+# ----------------------------------------------------------------
+# -------------------------- less used ---------------------------
+# ----------------------------------------------------------------
+
+
+def loop_iter(itr, n):
+    for i in tee(itr, n):
+        for j in i:
+            yield j
+
+
+def gen_apply(f):
+    """apply f on elements of itr"""
+    def _gen_apply(itr):
+        """apply f on elements of itr"""
+        for i in itr:
+            yield f(i)
+    return _gen_apply
+
+
+def gen_best_score(itr, best_score=None):
+    """ pick from itr the (score, *obj) with the best score"""
+    for x in itr:
+        new_score, *new_obj = x
+        if True if best_score is None else new_score > best_score:
+            best_score, best_obj = new_score, new_obj
+            yield [best_score] + best_obj
 
 
 def get_best_n(n):
@@ -91,65 +225,12 @@ def get_best_n(n):
     return _get_best_n
 
 
-def count_outputs(itr):
+def count_gen(itr):
     """yield dict of {output: number_of_occurrences}"""
     dct = {}
     for i in itr:
         dct[i] = 1 if i not in dct else dct[i] + 1
         yield dct
-
-
-def gen_apply(itr):
-    def _gen_apply(f):
-        """apply f on elements of itr"""
-        for i in itr:
-            yield f(i)
-    return _gen_apply
-
-
-def gen_range(length: int, n: int, start=0, step=1):
-    """range, but loop once index is over length"""
-    for i in range(n):
-        yield (start + i * step) % length
-
-
-def loop_range(length: int, n: int, start=0, step=1):
-    """range, but loop once index is over length"""
-    for i in range(n):
-        yield (start + i * step) % length
-
-
-def loop_list(v: list, n: int, start=0, step=1):
-    """like range but loop instead of stopping at the end"""
-    for i in range(n):
-        j = (start + i * step) % len(v)
-        yield v[j]
-
-
-def loop_gen(constructor, *ag, **kw):
-    """transform constructor into periodic generator
-    constructor(*ag, **kw) must be iterable"""
-    while True:
-        for i in constructor(*ag, **kw):
-            yield i
-
-
-def split_data(itr, p):
-    """
-    splits elements of itr in 2 groups
-    yields (1, element) with frequency p
-    yields (0, element) with frequency 1-p
-    :param itr: iterable
-    :param p: proportion (frequency)
-    """
-    count = 0
-    for i in enumerate(itr):
-        n, x = i
-        if count/(n+1) >= p:
-            yield (0, x)
-        else:
-            yield (1, x)
-            count += 1
 
 
 def infinite_range():
@@ -160,17 +241,46 @@ def infinite_range():
         n += 1
 
 
-# ---- time ----------------------------------------------------------------
+def loop_range(*args, **kwargs):
+    """iter in loop over range"""
+    while True:
+        for i in range(*args, **kwargs):
+            yield i
+
+
+def loop_list(v):
+    """like range but loop instead of stopping at the end"""
+    while True:
+        for i in v:
+            yield i
+
+
+def split_data(p):
+    """
+    splits elements of itr in 2 groups
+    yields (0, element) with frequency p
+    yields (1, element) with frequency 1-p
+    :param p: proportion (frequency)
+    """
+    def _split_data(itr):
+        for i in itr:
+            yield ((0 if random() < p else 1), i)
+    return _split_data
+
+
+# ----------------------------------------------------------------
+# ---------------------------- time ------------------------------
+# ----------------------------------------------------------------
 
 
 def yield_time():
-    """yield time lapsed from init"""
+    """yield time lapsed from call"""
     t0 = time()
     while True:
         yield time() - t0
 
 
-def yield_clock(itr, period):
+def yield_periodically(itr, period):
     """yield periodically, only after "period" of time"""
     t = time()
     for i in itr:
@@ -179,35 +289,17 @@ def yield_clock(itr, period):
             yield i
 
 
-# ---- SPECIAL ----------------------------------------------------------------
+def yield_timer(period):
+    return yield_periodically(yield_time(), period)
 
 
-def recursive_iter(depth, args=None, generator=None):
-    """
-    iterate recursively (nested "for" loops)
-    :param depth: number of nested loops
-    :param args: args that go in range()
-    :param generator: range by default, can be any generator
-    """
-    args = tuple() if args is None else args
-    generator = range if generator is None else generator
-
-    if depth <= 1:
-        for i in generator(args):
-            yield (i,)
-    else:
-        for i in generator(args):
-            for j in recursive_iter(depth - 1, args=args, generator=generator):
-                yield (i,) + j
+# ----------------------------------------------------------------
+# --------------------------- special ----------------------------
+# ----------------------------------------------------------------
 
 
 def tensor_gen(shape):
-    """yields tuples of indices that range from 0 to shape[i]-1
-    Example:
-        tensor_gen((3, 2))
-        returns
-        (0, 0), (0, 1), (1, 0), (1, 1), (2, 0), (2, 1)
-    """
+    """yields tuples (a_0, ... a_n) of indices a_i in range(shape[i])"""
     if shape:
         for i in range(shape[0]):
             for j in tensor_gen(shape[1:]):
@@ -216,7 +308,17 @@ def tensor_gen(shape):
         yield tuple()
 
 
-# -------------------------------------------------------------------
+def recursive_iter(*args):
+    """iterate recursively over all args"""
+    elements = [list(i) for i in args]
+    shape = [len(i) for i in elements]
+    for i in tensor_gen(shape):
+        yield tuple(elements[j][i[j]] for j in range(len(elements)))
+
+
+# ----------------------------------------------------------------
+# ------------------------- decorators ---------------------------
+# ----------------------------------------------------------------
 
 
 def gen_next_n_decorator(n):
@@ -247,16 +349,12 @@ def one_in_n_decorator(n):
     return wrap1
 
 
-def wrap_itr(itr, fun):
-    """wrap fun around iterable"""
-    for i in itr:
-        yield fun(i)
+# ----------------------------------------------------------------
+# --------------------------- TESTS ------------------------------
+# ----------------------------------------------------------------
 
 
-# ---- TESTS ----------------------------------------------------------------
-
-
-def __test_the_important_ones():
+def __test_frequently_used():
     a = infinite_range()
     a = skip_n(2)(a)
     a = one_in_n(4)(a)
@@ -265,11 +363,82 @@ def __test_the_important_ones():
     assert list(group_by_n(2)(range(4))) == [(0, 1), (2, 3)]
 
 
-def __test_count_outputs():
-    v = [1, 1, 1, 2, 2, 4]
-    assert list(count_outputs(v))[-1] == {1: 3, 2: 2, 4: 1}
+def __test_files():
+    name = '_test_file.txt'
+    with open(name, 'w') as file:
+        file.write('1\n2\n\n3\n4\n')
+
+    i_print(read_file(name))
+    i_print(read_file_lines(name))
+
+    os.remove(name)
+
+
+def __test_str(*args, n=20):
+
+    v = [1, 2, 0, 3, 4, 0]
+    gen = group_by(lambda x: x == 0)(v)
+    i_print(gen)
+
+    gen = (str(i) for i in range(n))
+    gen = skip_starts_with(*args)(gen)
+    i_print(gen)
+
+    gen = (str(i) for i in range(n))
+    gen = keep_starts_with(*args)(gen)
+    i_print(gen)
+
+    gen = (str(i) for i in range(n))
+    gen = skip_ends_with(*args)(gen)
+    i_print(gen)
+
+    gen = (str(i) for i in range(n))
+    gen = keep_ends_with(*args)(gen)
+    i_print(gen)
+
+
+def __test_less_used():
+    v = [4, 4, 4, 5, 5, 6]
+    gen = count_gen(v)
+    gen = gen_apply(lambda x: str(d_print(x)))(gen)
+    list(gen)
+
+
+def __test_time():
+    gen = yield_timer(.5)
+    gen = gen_next_n(6)(gen)
+    for i in gen:
+        print(i)
+
+
+def __test_special():
+    i_print(recursive_iter(['a', 'b'], range(3), range(1, 4)))
+    gen = range(30)
+    gen = split_data(1/3)(gen)
+    i_print(gen)
+
+
+def __test_decorators():
+    @gen_next_n_decorator(5)    # gen now yields only 5 elements
+    def gen():
+        return infinite_range()
+    i_print(gen())
+
+
+def __example_1():
+    v = [1, 2, 'a', 3, 4, 'b', 5, -2, 'c']
+    gen = group_by_n(3)(v)
+    gen = gen_apply(lambda x: x[0] + x[1])(gen)
+    gen = count_gen(gen)
+    i_print(gen)
 
 
 if __name__ == '__main__':
-    __test_the_important_ones()
-    __test_count_outputs()
+    # __test_frequently_used()
+    # __test_files()
+    # __test_str('1', '2', '3')
+    # __test_less_used()
+    # __test_time()
+    # __test_special()
+    # __test_decorators()
+    __example_1()
