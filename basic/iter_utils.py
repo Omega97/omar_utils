@@ -3,8 +3,8 @@
 Common tools to handle iterator
 """
 __author__ = "Omar Cusma Fait"
-__date__ = (11, 4, 2020)
-__version__ = '1.4.2'
+__date__ = (2, 5, 2020)
+__version__ = '1.4.3'
 
 from time import time
 import os
@@ -92,6 +92,30 @@ def filter_iter(criterion):
             if not criterion(i):
                 yield i
     return _selective_skip
+
+
+def break_iter(stop_criterion):
+    def break_iter_(itr):
+        for i in itr:
+            if stop_criterion(i):
+                break
+            else:
+                yield i
+    return break_iter_
+
+
+def sum_gen(itr):
+    """sum of generator"""
+    s = 0
+    for i in itr:
+        s += i
+        yield s
+
+
+def avg_gen(itr):
+    """average of generator"""
+    for n, i in enumerate(sum_gen(itr)):
+        yield i / (n+1)
 
 
 # ----------------------------------------------------------------
@@ -434,11 +458,11 @@ def __example_1():
 
 
 if __name__ == '__main__':
-    # __test_frequently_used()
-    # __test_files()
-    # __test_str('1', '2', '3')
-    # __test_less_used()
-    # __test_time()
-    # __test_special()
-    # __test_decorators()
+    __test_frequently_used()
+    __test_files()
+    __test_str('1', '2', '3')
+    __test_less_used()
+    __test_time()
+    __test_special()
+    __test_decorators()
     __example_1()
