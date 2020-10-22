@@ -101,29 +101,3 @@ def load_obj(path):
     """load obj from pickle file"""
     with open(path, "rb") as f:
         return pickle.load(f)
-
-
-def __test():
-    Name = 'data.txt'
-
-    write_file(Name, 'a b c\n1 2 3')
-    append_file(Name, 'new')
-    Data = file_to_list(Name)
-    assert Data == ['a b c', '1 2 3', 'new']
-    assert file_to_tab(Name) == [['a', 'b', 'c'], [1, 2, 3], ['new']]
-    del_file(Name)
-
-    Tab = [[1, '2'], ['c', 'D']]
-    tab_to_file(Name, Tab)
-    assert file_to_tab(Name) == [[1, 2], ['c', 'D']]
-    del_file(Name)
-
-    Text = '古'
-    write_file(Name, Text)
-    assert read_file(Name) == '古'
-    assert type(read_file(Name)) == str
-    del_file(Name)
-
-
-if __name__ == "__main__":
-    __test()
