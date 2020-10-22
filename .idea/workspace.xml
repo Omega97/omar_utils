@@ -1,21 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fd28a3ff-a683-4958-aa3d-ec0a4eda648c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/_examples/example_set.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/_examples/example_useful.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/_examples/examples_iter_utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/_tests/test_iter_utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/_tests/test_set.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic/Dict.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic/Set.py" beforeDir="false" afterPath="$PROJECT_DIR$/basic/Set.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic/iter_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/basic/iter_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic/tensors.py" beforeDir="false" afterPath="$PROJECT_DIR$/basic/tensors.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/useful.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/useful.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/logger.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_utils/logger.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/plot_algorithm_speed.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_utils/plot_algorithm_speed.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/timer.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_utils/timer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/unit_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_utils/unit_test.py" afterDir="false" />
+    <list default="true" id="fd28a3ff-a683-4958-aa3d-ec0a4eda648c" name="Default Changelist" comment="new examples, &#10;fixed Set__sub__, &#10;fixed __init__, &#10;other minor changes">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -25,11 +12,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/basic/Set.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="67">
               <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="399">
+              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+              <folding>
+                <element signature="e#161#200#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -81,6 +80,7 @@
         <option value="$PROJECT_DIR$/_tests/test_set.py" />
         <option value="$PROJECT_DIR$/basic/Set.py" />
         <option value="$PROJECT_DIR$/_examples/example_set.py" />
+        <option value="$PROJECT_DIR$/__init__.py" />
       </list>
     </option>
   </component>
@@ -406,6 +406,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="67">
           <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="399">
+          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+          <folding>
+            <element signature="e#161#200#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
