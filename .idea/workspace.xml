@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd28a3ff-a683-4958-aa3d-ec0a4eda648c" name="Default Changelist" comment="new examples, &#10;fixed Set__sub__, &#10;fixed __init__, &#10;other minor changes">
-      <change afterPath="$PROJECT_DIR$/_tests/test_iter.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_examples/example_computation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic/Iter.py" beforeDir="false" afterPath="$PROJECT_DIR$/basic/Iter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/basic/functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/carry_on.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/computation.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/computation.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,22 +15,22 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/basic/Iter.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data/computation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="13" column="24" lean-forward="true" selection-start-line="13" selection-start-column="24" selection-end-line="13" selection-end-column="24" />
+            <state relative-caret-position="684">
+              <caret line="36" lean-forward="true" selection-start-line="36" selection-end-line="36" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/_tests/test_iter.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/_examples/example_computation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="17" column="16" lean-forward="true" selection-start-line="17" selection-start-column="16" selection-end-line="17" selection-end-column="16" />
+            <state relative-caret-position="570">
+              <caret line="30" column="61" selection-start-line="30" selection-start-column="61" selection-end-line="30" selection-end-column="61" />
               <folding>
-                <element signature="e#0#24#0" expanded="true" />
+                <element signature="e#7#37#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -69,8 +69,10 @@
         <option value="$PROJECT_DIR$/basic/files.py" />
         <option value="$PROJECT_DIR$/_tests/test_files.py" />
         <option value="$PROJECT_DIR$/basic/functions.py" />
-        <option value="$PROJECT_DIR$/basic/Iter.py" />
         <option value="$PROJECT_DIR$/_tests/test_iter.py" />
+        <option value="$PROJECT_DIR$/basic/Iter.py" />
+        <option value="$PROJECT_DIR$/data/computation.py" />
+        <option value="$PROJECT_DIR$/_examples/example_computation.py" />
       </list>
     </option>
   </component>
@@ -114,6 +116,11 @@
             <path>
               <item name="omar_utils" type="b2602c69:ProjectViewProjectNode" />
               <item name="omar_utils" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="omar_utils" type="b2602c69:ProjectViewProjectNode" />
+              <item name="omar_utils" type="462c0819:PsiDirectoryNode" />
               <item name="misc" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -124,17 +131,6 @@
             <path>
               <item name="omar_utils" type="b2602c69:ProjectViewProjectNode" />
               <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
-            </path>
-            <path>
-              <item name="omar_utils" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
-              <item name="Scratches" type="d62648e6:ScratchProjectViewPane$MyRootNode" />
-            </path>
-            <path>
-              <item name="omar_utils" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
-              <item name="Scratches" type="d62648e6:ScratchProjectViewPane$MyRootNode" />
-              <item name="misc" type="1e004dc1:ScratchProjectViewPane$MyRootNode$1$1" />
             </path>
           </expand>
           <select />
@@ -148,8 +144,8 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Omar\Documents\GitHub\omar_utils" />
       <recent name="C:\Users\Omar\.PyCharmCE2018.3\config\scratches" />
+      <recent name="C:\Users\Omar\Documents\GitHub\omar_utils" />
       <recent name="C:\Users\Omar\.PyCharmCE2018.3\config\scratches\misc" />
       <recent name="C:\Users\Omar\.PyCharmCE2018.3\config\scratches\numbered" />
     </key>
@@ -166,7 +162,28 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.test_iter">
+  <component name="RunManager" selected="Python.example_computation">
+    <configuration name="example_computation" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="omar_utils" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/_examples" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/_examples/example_computation.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="example_dict" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="omar_utils" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -201,27 +218,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/_examples/example_set.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="example_useful" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="omar_utils" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/_examples" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/_examples/example_useful.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -274,11 +270,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.example_computation" />
         <item itemvalue="Python.test_iter" />
         <item itemvalue="Python.example_set" />
         <item itemvalue="Python.test_set" />
         <item itemvalue="Python.example_dict" />
-        <item itemvalue="Python.example_useful" />
       </list>
     </recent_temporary>
   </component>
@@ -433,6 +429,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/basic/Iter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/_tests/test_iter.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
@@ -443,10 +446,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/basic/Iter.py">
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/carry_on.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="247">
-          <caret line="13" column="24" lean-forward="true" selection-start-line="13" selection-start-column="24" selection-end-line="13" selection-end-column="24" />
+          <caret line="13" column="3" lean-forward="true" selection-start-line="13" selection-start-column="3" selection-end-line="13" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/computation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="684">
+          <caret line="36" lean-forward="true" selection-start-line="36" selection-end-line="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/_examples/example_computation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="30" column="61" selection-start-line="30" selection-start-column="61" selection-end-line="30" selection-end-column="61" />
+          <folding>
+            <element signature="e#7#37#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
