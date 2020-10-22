@@ -2,12 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd28a3ff-a683-4958-aa3d-ec0a4eda648c" name="Default Changelist" comment="new examples, &#10;fixed Set__sub__, &#10;fixed __init__, &#10;other minor changes">
-      <change afterPath="$PROJECT_DIR$/_tests/test_File.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/_tests/test_tensors.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_examples/example_plot_algorithm_speed.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_tests/test_timer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_tests/test_unit_test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_tests/test_set.py" beforeDir="false" afterPath="$PROJECT_DIR$/_tests/test_set.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic/tensors.py" beforeDir="false" afterPath="$PROJECT_DIR$/basic/tensors.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/File.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/File.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_utils/logger.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_utils/plot_algorithm_speed.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_utils/plot_algorithm_speed.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_utils/timer.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_utils/timer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_utils/unit_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_utils/unit_test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,29 +18,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/data/File.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="152">
-              <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/_tests/test_File.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="209">
-              <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -85,6 +65,13 @@
         <option value="$PROJECT_DIR$/_tests/test_tensors.py" />
         <option value="$PROJECT_DIR$/data/File.py" />
         <option value="$PROJECT_DIR$/_tests/test_File.py" />
+        <option value="$PROJECT_DIR$/test_utils/unit_test.py" />
+        <option value="$PROJECT_DIR$/_tests/test_unit_test.py" />
+        <option value="$PROJECT_DIR$/_tests/test_plot_algorithm_speed.py" />
+        <option value="$PROJECT_DIR$/test_utils/plot_algorithm_speed.py" />
+        <option value="$PROJECT_DIR$/_examples/example_plot_algorithm_speed.py" />
+        <option value="$PROJECT_DIR$/_tests/test_timer.py" />
+        <option value="$PROJECT_DIR$/test_utils/timer.py" />
       </list>
     </option>
   </component>
@@ -155,7 +142,11 @@
     <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Omar\Documents\GitHub\omar_utils\_tests" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Omar\Documents\GitHub\omar_utils\_examples" />
       <recent name="C:\Users\Omar\.PyCharmCE2018.3\config\scratches" />
       <recent name="C:\Users\Omar\Documents\GitHub\omar_utils" />
       <recent name="C:\Users\Omar\.PyCharmCE2018.3\config\scratches\misc" />
@@ -174,8 +165,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.test_File">
-    <configuration name="example_computation" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.test_timer">
+    <configuration name="example_plot_algorithm_speed" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="omar_utils" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -187,7 +178,28 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/_examples/example_computation.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/_examples/example_plot_algorithm_speed.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="plot_algorithm_speed" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="omar_utils" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test_utils" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test_utils/plot_algorithm_speed.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -217,7 +229,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test_iter" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="test_timer" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="omar_utils" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -229,7 +241,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/_tests/test_iter.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/_tests/test_timer.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -238,7 +250,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test_set" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="test_unit_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="omar_utils" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -250,28 +262,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/_tests/test_set.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="test_tensors" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="omar_utils" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/_tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/_tests/test_tensors.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/_tests/test_unit_test.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -282,11 +273,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.test_timer" />
+        <item itemvalue="Python.example_plot_algorithm_speed" />
+        <item itemvalue="Python.plot_algorithm_speed" />
+        <item itemvalue="Python.test_unit_test" />
         <item itemvalue="Python.test_File" />
-        <item itemvalue="Python.test_tensors" />
-        <item itemvalue="Python.test_set" />
-        <item itemvalue="Python.example_computation" />
-        <item itemvalue="Python.test_iter" />
       </list>
     </recent_temporary>
   </component>
@@ -305,7 +296,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1080" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12526652" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -502,10 +492,71 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/_tests/test_File.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+        <state relative-caret-position="190">
+          <caret line="10" column="16" lean-forward="true" selection-start-line="10" selection-start-column="16" selection-end-line="10" selection-end-column="16" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_utils/unit_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="846">
+          <caret line="84" selection-start-line="84" selection-end-line="84" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_utils/logger.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_utils/plot_algorithm_speed.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="16" lean-forward="true" selection-start-line="10" selection-start-column="16" selection-end-line="10" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/_examples/example_plot_algorithm_speed.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="14" column="26" lean-forward="true" selection-start-line="14" selection-start-column="26" selection-end-line="14" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/_tests/test_unit_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="4" column="10" lean-forward="true" selection-start-line="4" selection-start-column="10" selection-end-line="4" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/1698905394/time.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="163" column="4" selection-start-line="163" selection-start-column="4" selection-end-line="163" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_utils/timer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="8" column="18" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/_tests/test_timer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="17" lean-forward="true" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#30#0" expanded="true" />
           </folding>
         </state>
       </provider>

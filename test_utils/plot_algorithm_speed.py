@@ -1,3 +1,8 @@
+"""
+                plot_algorithm_speed
+
+Compare time it takes to execute a list of algorithms
+"""
 import matplotlib.pyplot as plt
 import numpy as np
 from time import time
@@ -9,7 +14,7 @@ def get_time(f):
     return time() - t
 
 
-def test_time(algorithms: list, repeat=5, title='Time comparison', y_label='s'):
+def test_time(algorithms: list, repeat=2, title='Time comparison', y_label='s'):
     """display a plot if time taken to execute algorithms"""
     data = [[] for _ in algorithms]
 
@@ -27,14 +32,3 @@ def test_time(algorithms: list, repeat=5, title='Time comparison', y_label='s'):
     plt.title(title)
     plt.ylabel(y_label)
     plt.show()
-
-
-if __name__ == '__main__':
-    from random import random
-
-    def fun(n):
-        def f():
-            return sorted([random() for _ in range(n)])
-        return f
-
-    test_time([fun(i * 10**4) for i in range(10)])
