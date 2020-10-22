@@ -42,13 +42,3 @@ class Default:
 
     def __ror__(self, other):
         return self.value if other is None else other
-
-
-if __name__ == '__main__':
-
-    describe(list, starts_with='_', has_in_name='l')
-
-    print()
-    D = Default
-    print(None | D(1))
-    print(2 | D(1))

@@ -233,7 +233,7 @@ def string_to_matrix(s, separator=None):
 
 if __name__ == "__main__":
 
-    # exhaustive tests
+    # exhaustive test_utils
 
     assert is_vector([1, 2, 3])
     assert not is_vector([1, 2, [1]])
