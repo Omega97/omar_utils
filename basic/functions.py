@@ -1,5 +1,4 @@
-""" lib of useful functions
-"""
+""" lib of useful functions """
 from math import exp, tanh
 
 
@@ -100,15 +99,3 @@ def softmax(v):
     out = [exp(i) for i in v]
     s = sum(out)
     return [i/s for i in out]
-
-
-if __name__ == "__main__":
-
-    assert norm([3, 4]) == 5
-    assert dist([-2, -2], [1, 2]) == 5
-    assert poly(2, [1, -1, 2]) == 7
-    assert step(2) == 1
-    assert relu(2) == 2
-    assert relu(-2) == 0
-    assert prelu(2, .1) == 2
-    assert prelu(-2, .1) == -.2

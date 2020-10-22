@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd28a3ff-a683-4958-aa3d-ec0a4eda648c" name="Default Changelist" comment="new examples, &#10;fixed Set__sub__, &#10;fixed __init__, &#10;other minor changes">
-      <change afterPath="$PROJECT_DIR$/_tests/test_files.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic/files.py" beforeDir="false" afterPath="$PROJECT_DIR$/basic/files.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_tests/test_iter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic/Iter.py" beforeDir="false" afterPath="$PROJECT_DIR$/basic/Iter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/basic/functions.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,20 +15,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/basic/files.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/basic/Iter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="846">
-              <caret line="103" lean-forward="true" selection-start-line="103" selection-end-line="103" />
+            <state relative-caret-position="247">
+              <caret line="13" column="24" lean-forward="true" selection-start-line="13" selection-start-column="24" selection-end-line="13" selection-end-column="24" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/_tests/test_files.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/_tests/test_iter.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="323">
-              <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+              <caret line="17" column="16" lean-forward="true" selection-start-line="17" selection-start-column="16" selection-end-line="17" selection-end-column="16" />
+              <folding>
+                <element signature="e#0#24#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -63,6 +68,9 @@
         <option value="$PROJECT_DIR$/__init__.py" />
         <option value="$PROJECT_DIR$/basic/files.py" />
         <option value="$PROJECT_DIR$/_tests/test_files.py" />
+        <option value="$PROJECT_DIR$/basic/functions.py" />
+        <option value="$PROJECT_DIR$/basic/Iter.py" />
+        <option value="$PROJECT_DIR$/_tests/test_iter.py" />
       </list>
     </option>
   </component>
@@ -158,7 +166,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.example_set">
+  <component name="RunManager" selected="Python.test_iter">
     <configuration name="example_dict" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="omar_utils" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -222,7 +230,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test_iter_utils" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="test_iter" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="omar_utils" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -230,11 +238,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/basic/tests" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/_tests" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/basic/tests/test_iter_utils.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/_tests/test_iter.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -266,11 +274,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.test_iter" />
         <item itemvalue="Python.example_set" />
         <item itemvalue="Python.test_set" />
         <item itemvalue="Python.example_dict" />
         <item itemvalue="Python.example_useful" />
-        <item itemvalue="Python.test_iter_utils" />
       </list>
     </recent_temporary>
   </component>
@@ -291,7 +299,7 @@
     <frame x="0" y="0" width="1920" height="1080" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12526652" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12526652" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -306,7 +314,7 @@
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Run" order="3" visible="true" weight="0.32889125" />
+      <window_info active="true" anchor="right" id="Run" order="3" visible="true" weight="0.32889125" />
       <window_info anchor="right" id="Find" order="4" weight="0.32889125" />
     </layout>
   </component>
@@ -318,13 +326,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="95">
           <caret line="5" selection-start-line="5" selection-end-line="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/basic/iter_utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-6025">
-          <caret line="8" column="21" lean-forward="true" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="21" />
         </state>
       </provider>
     </entry>
@@ -412,6 +413,40 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
           <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/basic/functions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="846">
+          <caret line="101" selection-start-line="101" selection-end-line="101" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/basic/iter_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="87" column="4" selection-start-line="87" selection-start-column="4" selection-end-line="87" selection-end-column="4" />
+          <folding>
+            <element signature="e#140#161#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/_tests/test_iter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="17" column="16" lean-forward="true" selection-start-line="17" selection-start-column="16" selection-end-line="17" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#24#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/basic/Iter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="13" column="24" lean-forward="true" selection-start-line="13" selection-start-column="24" selection-end-line="13" selection-end-column="24" />
         </state>
       </provider>
     </entry>
