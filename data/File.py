@@ -4,8 +4,9 @@ The File class:
 2) Tries to download data from web (if no data loaded but URL provided)
 """
 __author__ = "Omar Cusma Fait"
-__date__ = (16, 3, 2020)
-__version__ = "2.0.0"
+__date__ = (22, 10, 2020)
+__version__ = "2.1.0"
+
 import pandas as pd
 
 
@@ -16,34 +17,35 @@ class File:
         self.load_method = load_method
         self.do_report = do_report
         self.data = None
-        self._load_data()
+        self.try_load_form_path()
+        self.try_to_download_from_url()
 
-    def _report(self, s):
+    def report(self, s):
         if self.do_report:
             print('>>', s)
 
-    def _load_data(self):
-        """
-        1) try to load form path
-        2) if data not loaded then try to download from url
-        :return:
-        """
+    def try_load_form_path(self):
         try:
-            self._report('Loading file...')
+            self.report('Loading file...')
             self.data = self.load_method(self.path)
-            self._report('File successfully loaded!')
+            self.report('File successfully loaded!')
         except FileNotFoundError:
-            self._report(f'File not found!\n{self.path}')
+            self.report(f'File not found!\n{self.path}')
 
+    def try_to_download_from_url(self):
+        try:
+            self.report('Downloading file...')
+            self.data = self.load_method(self.url)
+            self.report('File successfully downloaded!')
+            self.save()
+            self.report('Data saved!')
+        except FileNotFoundError:
+            self.report(f'File not found!\n{self.path}')
+
+    def load_data(self):
+        self.try_load_form_path()
         if self.data is None:
-            try:
-                self._report('Downloading file...')
-                self.data = self.load_method(self.url)
-                self._report('File successfully downloaded!')
-                self.save()
-                self._report('Data saved!')
-            except FileNotFoundError:
-                self._report(f'File not found!\n{self.path}')
+            self.try_to_download_from_url()
 
     def get_data(self) -> pd.DataFrame:
         return self.data
@@ -53,16 +55,3 @@ class File:
 
     def __call__(self, *args, **kwargs):
         return self.data
-
-
-if __name__ == '__main__':
-
-    def _test_1():
-        """download & save & load_file"""
-        print('\n\n\t TEST 1 \n')
-        url = 'https://raw.githubusercontent.com/Omega97/google_hash/master/example/problems/a_example.txt'
-        path = 'data.pkl'
-        f = File(url=url, path=path)
-        print(f().head())
-
-    _test_1()

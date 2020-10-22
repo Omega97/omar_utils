@@ -12,6 +12,8 @@ def test_1():
     assert Set(1, 2, 3).apply(lambda x: x + 1) == Set(2, 3, 4)
     assert Set('a', 'b') * Set(3, 2) == Set(['aa', 'aaa', 'bb', 'bbb'])
     assert sum([Set(i + 1) for i in range(5)]) == Set([i + 1 for i in range(5)])
+    assert sum([Set(1), Set(2)]) == Set(1, 2)
+    assert 0 + Set(1) == Set(1)
 
 
 if __name__ == '__main__':
