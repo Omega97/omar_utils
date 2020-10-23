@@ -1,5 +1,5 @@
 # omar_utils
-A library of useful methods of all kinds (basic file handling, tensors, GIFs, sets and much more)
+A library of useful methods of all kinds (generators, iterators, basic file handling, sets, tensors and much more)
 
 ## Features:
 
