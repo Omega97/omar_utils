@@ -3,8 +3,8 @@
 Common tools to handle iterator
 """
 __author__ = "Omar Cusma Fait"
-__date__ = (22, 10, 2020)
-__version__ = '1.4.4'
+__date__ = (16, 12, 2020)
+__version__ = '1.4.5'
 
 from time import time
 import os
@@ -257,9 +257,9 @@ def count_gen(itr):
         yield dct
 
 
-def infinite_range():
+def infinite_range(start=0):
     """like range, but never ends"""
-    n = 0
+    n = start
     while True:
         yield n
         n += 1
