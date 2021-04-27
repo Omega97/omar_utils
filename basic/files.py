@@ -5,13 +5,16 @@ Basic operations with files
 save obj
 """
 __author__ = "Omar Cusma Fait"
-__date__ = (18, 12, 2019)
-__version__ = '1.0.3'
+__date__ = (5, 4, 2021)
+__version__ = '1.1.0'
 
-from os import makedirs, listdir, remove
-from omar_utils.basic.tensors import tensor_to_string, apply_to_tensor, soft_to_float
-import shutil
+import os
 import pickle
+
+if __name__ == '__main__':
+    from basic.tensors import *
+else:
+    from ..basic.tensors import *
 
 
 def write_file(path, text, encoding='utf-8'):
@@ -32,36 +35,19 @@ def append_file(path, text, new_line='\n'):
         file.write(new_line + text)
 
 
-def make_dir(path):
-    """create directory"""
-    try:
-        makedirs(path)
-    except FileExistsError:
-        pass
+def paths_in_dir(path):
+    """generator of all paths in path"""
+    for name in os.listdir(path):
+        yield path + '\\' + name
 
 
-def del_dir(path):
-    """ delete directory """
-    try:
-        shutil.rmtree(path)
-    except FileNotFoundError:
-        pass
-
-
-def del_file(path):
-    """ delete file """
-    try:
-        remove(path)
-    except FileNotFoundError:
-        pass
-
-
-def list_files_in_dir(path):
-    """ :returns list of files in path, None if path not found (./ indicates the dir of the file) """
-    try:
-        return listdir(path)
-    except FileNotFoundError:
-        return
+def count_files(path):
+    """count the number of files in a directory"""
+    path = path.replace('"', '')
+    if not os.path.isdir(path):
+        return True
+    else:
+        return sum(count_files(i) for i in paths_in_dir(path))
 
 
 def file_to_list(path):
