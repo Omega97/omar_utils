@@ -372,3 +372,17 @@ def one_in_n_decorator(n):
                     j = n
         return wrap2
     return wrap1
+
+
+# ----------------------------------------------------------------
+# ----------------------- combinatorics --------------------------
+# ----------------------------------------------------------------
+
+
+def permutation(length, elements=(0, 1)):
+    if length > 0:
+        for i in elements:
+            for s in permutation(length-1, elements=elements):
+                yield s + [i]
+    else:
+        yield []
