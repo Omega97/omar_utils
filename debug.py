@@ -12,10 +12,12 @@ This will show you:
 
 
 def debug_print(s='', indent=0):
+    """pretty-print string s"""
     print(Debug.separator * (Debug.count + indent) + ' ' + s)
 
 
 def pre_print(fun, args, kwargs):
+    """print name of the function and arguments"""
     a_ = [str(i) for i in args]
     k_ = [str(i) + "=" + str(kwargs[i]) for i in kwargs]
     s = f'{fun.__name__}(' + f'{", ".join(a_ + k_)}' + ')'
@@ -25,6 +27,7 @@ def pre_print(fun, args, kwargs):
 
 
 def post_print(out):
+    """print the output of the function"""
     s = f'{out}'
     Debug.count -= 1
     debug_print(indent=1)
