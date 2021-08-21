@@ -3,13 +3,13 @@
 Common tools to handle iterator
 """
 __author__ = "Omar Cusma Fait"
-__date__ = (22, 10, 2020)
-__version__ = '1.4.4'
+__date__ = (21, 8, 2021)
+__version__ = '1.5.4'
 
 from time import time
 import os
 from random import random
-from itertools import tee
+from itertools import tee, islice
 
 
 # ----------------------------------------------------------------
@@ -26,63 +26,59 @@ def i_print(itr, n=-1, head='\n'):
         print(x)
 
 
+def n_wise(n):
+    """iterate n elements at the time, each time drop first and add new element at the end"""
+    def wrap(itr):
+        iterators = tee(itr, n)
+        for i in range(n):
+            for _ in range(i):
+                next(iterators[i])
+        return zip(*iterators)
+    return wrap
+
+
 def d_print(dct, width=8, head='\n'):
+    """print dictionary"""
     print(end=head)
     for i in dct:
         print(f'{i:>{width}} \t{dct[i]}')
 
 
 def gen_next_n(n):
-    """generator of next n items when called"""
-    def _gen_next_n(itr):
-        if n == 0:
-            return
-        for i, x in enumerate(itr):
-            yield x
-            if i + 1 == n:
-                return
-    return _gen_next_n
+    """creates a generator of the next n elements of itr"""
+    def wrap(itr):
+        return islice(itr, n)
+    return wrap
 
 
 def one_in_n(n):
     """yields only one element every n"""
-    def _one_in_n(itr):
+    def wrap(itr):
         for i, x in enumerate(itr):
             if i % n == 0:
                 yield x
-    return _one_in_n
+    return wrap
 
 
 def skip_n(n):
     """skip n elements of itr """
-    def _skip_n(itr):
+    def wrap(itr):
         for i, x in enumerate(itr):
             if i >= n:
                 yield x
-    return _skip_n
+    return wrap
 
 
 def group_by_n(n):
     """group elements of itr in n-long tuples"""
-    def _group_by_n(itr):
+    def wrap(itr):
         c = tuple()
-        for i in itr:
-            c += tuple([i])
-            if len(c) >= n:
+        for i, x in enumerate(itr):
+            c += (i, )
+            if i % n == n - 1:
                 yield c
                 c = tuple()
-    return _group_by_n
-
-
-def group_by(stop_criterion):
-    def _group_by(itr):
-        c = []
-        for i in itr:
-            c += [i]
-            if stop_criterion(i):
-                yield c
-                c = []
-    return _group_by
+    return wrap
 
 
 def filter_iter(criterion):
@@ -94,10 +90,13 @@ def filter_iter(criterion):
     return _selective_skip
 
 
-def break_iter(stop_criterion):
+def stop_iter(stop_criterion):
+    """
+    stop_criterion: takes index and element as input, return True to stop iteration
+    """
     def break_iter_(itr):
-        for i in itr:
-            if stop_criterion(i):
+        for i, x in enumerate(itr):
+            if stop_criterion(i, x):
                 break
             else:
                 yield i
@@ -249,9 +248,9 @@ def get_best_n(n):
     return _get_best_n
 
 
-def count_gen(itr):
+def count(itr):
     """yield dict of {output: number_of_occurrences}"""
-    dct = {}
+    dct = dict()
     for i in itr:
         dct[i] = 1 if i not in dct else dct[i] + 1
         yield dct
@@ -372,17 +371,3 @@ def one_in_n_decorator(n):
                     j = n
         return wrap2
     return wrap1
-
-
-# ----------------------------------------------------------------
-# ----------------------- combinatorics --------------------------
-# ----------------------------------------------------------------
-
-
-def permutation(length, elements=(0, 1)):
-    if length > 0:
-        for i in elements:
-            for s in permutation(length-1, elements=elements):
-                yield s + [i]
-    else:
-        yield []
