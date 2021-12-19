@@ -9,21 +9,13 @@ __version__ = '1.5.4'
 from time import time
 import os
 from random import random
-from itertools import tee, islice
+from itertools import tee, filterfalse
+from collections import Counter
 
 
 # ----------------------------------------------------------------
 # ----------------------- frequently used ------------------------
 # ----------------------------------------------------------------
-
-
-def i_print(itr, n=-1, head='\n'):
-    """print an iterable (first n elements) """
-    print(end=head)
-    for i, x in enumerate(itr):
-        if i == n:
-            return
-        print(x)
 
 
 def n_wise(n):
@@ -37,6 +29,15 @@ def n_wise(n):
     return wrap
 
 
+def i_print(itr, n=None, head='\n'):
+    """print an iterable (first n elements) """
+    print(end=head)
+    for i, x in enumerate(itr):
+        if i == n:
+            return
+        print(x)
+
+
 def d_print(dct, width=8, head='\n'):
     """print dictionary"""
     print(end=head)
@@ -44,14 +45,7 @@ def d_print(dct, width=8, head='\n'):
         print(f'{i:>{width}} \t{dct[i]}')
 
 
-def gen_next_n(n):
-    """creates a generator of the next n elements of itr"""
-    def wrap(itr):
-        return islice(itr, n)
-    return wrap
-
-
-def one_in_n(n):
+def once_every_n(n):
     """yields only one element every n"""
     def wrap(itr):
         for i, x in enumerate(itr):
@@ -81,15 +75,6 @@ def group_by_n(n):
     return wrap
 
 
-def filter_iter(criterion):
-    """skip from iter the elements that satisfy the criterion"""
-    def _selective_skip(itr):
-        for i in itr:
-            if not criterion(i):
-                yield i
-    return _selective_skip
-
-
 def stop_iter(stop_criterion):
     """
     stop_criterion: takes index and element as input, return True to stop iteration
@@ -103,18 +88,31 @@ def stop_iter(stop_criterion):
     return break_iter_
 
 
-def sum_gen(itr):
-    """sum of generator"""
-    s = 0
-    for i in itr:
-        s += i
-        yield s
+def exp_iter(itr):
+    """iterable yields exponentially less frequently"""
+    count = 0
+    n = 0
+    for i, e in enumerate(itr):
+        if i == n:
+            yield e
+            count += 1
+            n = 2 ** count - 1
 
 
-def avg_gen(itr):
-    """average of generator"""
-    for n, i in enumerate(sum_gen(itr)):
-        yield i / (n+1)
+class CallableCounter(Counter):
+    """
+    - uses Counter to count objects (during __init__)
+    - you can also count by calling on individual keys
+    - read_itr: counts items in iterable
+    """
+
+    def __call__(self, key):
+        value = self[key] if key in self else 1
+        self.update({key: value})
+
+    def read_itr(self, itr):
+        for i in itr:
+            self(i)
 
 
 # ----------------------------------------------------------------
@@ -131,7 +129,7 @@ def read_file(path, encoding='utf-8'):
 
 def read_file_lines(path, encoding='utf-8'):
     """read file line by line (skip empty lines)"""
-    return filter_iter(lambda x: x == '')(read_file(path, encoding))
+    return filterfalse(lambda x: x == '', read_file(path, encoding))
 
 
 def gen_files(path, search_sub_dir=True):
@@ -159,16 +157,14 @@ def gen_dir(path, search_sub_dir=True):
 
 def skip_starts_with(*args: (str,)):
     """skip all elements that start with an element in args"""
-    def _skip_starts_with(itr):
+    def wrap(itr):
         for i in itr:
-            do_yield = True
             for j in args:
                 if i.startswith(j):
-                    do_yield = False
                     break
-            if do_yield:
+            else:
                 yield i
-    return _skip_starts_with
+    return wrap
 
 
 def keep_starts_with(*args: (str,)):
@@ -178,21 +174,20 @@ def keep_starts_with(*args: (str,)):
             for j in args:
                 if i.startswith(j):
                     yield i
+                    break
     return _skip_starts_with
 
 
 def skip_ends_with(*args: (str,)):
     """skip all elements that start with an element in args"""
-    def _skip_starts_with(itr):
+    def wrap(itr):
         for i in itr:
-            do_yield = True
             for j in args:
                 if i.endswith(j):
-                    do_yield = False
                     break
-            if do_yield:
+            else:
                 yield i
-    return _skip_starts_with
+    return wrap
 
 
 def keep_ends_with(*args: (str,)):
@@ -202,18 +197,13 @@ def keep_ends_with(*args: (str,)):
             for j in args:
                 if i.endswith(j):
                     yield i
+                    break
     return _skip_starts_with
 
 
 # ----------------------------------------------------------------
 # -------------------------- less used ---------------------------
 # ----------------------------------------------------------------
-
-
-def loop_iter(itr, n):
-    for i in tee(itr, n):
-        for j in i:
-            yield j
 
 
 def gen_apply(f):
@@ -248,33 +238,10 @@ def get_best_n(n):
     return _get_best_n
 
 
-def count(itr):
-    """yield dict of {output: number_of_occurrences}"""
-    dct = dict()
-    for i in itr:
-        dct[i] = 1 if i not in dct else dct[i] + 1
-        yield dct
-
-
-def infinite_range():
-    """like range, but never ends"""
-    n = 0
-    while True:
-        yield n
-        n += 1
-
-
 def loop_range(*args, **kwargs):
     """iter in loop over range"""
     while True:
         for i in range(*args, **kwargs):
-            yield i
-
-
-def loop_list(v):
-    """like range but loop instead of stopping at the end"""
-    while True:
-        for i in v:
             yield i
 
 
@@ -287,7 +254,7 @@ def split_data(p):
     """
     def _split_data(itr):
         for i in itr:
-            yield ((0 if random() < p else 1), i)
+            yield (0 if random() < p else 1), i
     return _split_data
 
 
@@ -371,3 +338,56 @@ def one_in_n_decorator(n):
                     j = n
         return wrap2
     return wrap1
+
+
+# ----------------------------------------------------------------
+# ------------------------- deprecated ---------------------------
+# ----------------------------------------------------------------
+
+
+def gen_next_n(n):  # islice(itr, n)
+    """creates a generator of the next n elements of itr"""
+    def wrap(itr):
+        for i, x in enumerate(itr):
+            if i == n:
+                return
+            yield x
+    return wrap
+
+
+def infinite_range(start=0, step=1):    # count(start, step)
+    """like range, but never ends"""
+    n = start
+    while True:
+        yield n
+        n += step
+
+
+def loop_iter(itr, n):  # cycle
+    for i in tee(itr, n):
+        for j in i:
+            yield j
+
+
+def loop_list(v):   # cycle
+    """like range but loop instead of stopping at the end"""
+    while True:
+        for i in v:
+            yield i
+
+
+def filter_iter(criterion):     # filterfalse(predicate, iterable)
+    """skip from iter the elements that satisfy the criterion"""
+    def wrap(itr):
+        for i in itr:
+            if not criterion(i):
+                yield i
+    return wrap
+
+
+def sum_gen(itr):   # accumulate
+    """sum of generator"""
+    s = 0
+    for i in itr:
+        s += i
+        yield s
